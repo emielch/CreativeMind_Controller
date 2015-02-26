@@ -122,11 +122,11 @@ class Segment{
 			}
 		}
 		
-		void move(){
+		void move(float dt){
 			if(effectID == SINES){
-				e_pos += e_spd;
+				e_pos += e_spd*dt;
 			}else if(effectID == RAINBOW){
-				e_pos += e_spd;
+				e_pos += e_spd*dt;
 			}
 		}
 		
@@ -149,25 +149,32 @@ class Segment{
 class Beam{
 	public:
 		Beam(){};
-		void begin(Segment *seg, boolean dirUp, float spd, float len, Color col){
+		void begin(Segment *seg, boolean dirUp, float spd, float len, Color col, boolean lightUp){    // speed in cs/s (centiSegment per second)
 			active = true;
+			lightUpMode = lightUp;
 			onSegment = seg;
 			spread = len;
 			color = col;
-			if(dirUp){
-				position = 0 - spread/2;
-				speed = spd;
+			int seglen = onSegment->getLen();
+			if( !lightUp ){
+				spd = seglen * spd * 0.01;  // convert to leds per second
+				if(dirUp){
+					posFactor = 0;
+					speed = spd;
+				}else{
+					posFactor = 1;
+					speed = -spd;
+				}
 			}else{
-				position = onSegment->getLen() + spread/2;
-				speed = -spd;
+				speed = spd * 0.01; //convert to timeto animate per second
 			}
 		}
 		
-		boolean move(){
+		boolean move(float dt){
 			if(active){
-				position += speed;
+				posFactor += speed*dt;
 				uint16_t segLen = onSegment->getLen();
-				if( position>segLen+spread/2 || position<0-spread/2 ){
+				if( posFactor>1|| posFactor<0 ){
 					active = false;
 					return false;
 				}else{
@@ -178,16 +185,32 @@ class Beam{
 		
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
 			if(active){
-				int startLed = position - spread/2;
-				int endLed = position + spread/2;
-				
-				for(int i=startLed; i<=endLed; i++){
-					if( i>=0 && i<onSegment->getLen() ){
+				if(lightUpMode){
+					float bri;
+					if(posFactor<0.5){
+						bri = posFactor*2;
+					}else{
+						bri = 1 - (posFactor*2 - 1);
+					}
+					for(int i=0; i<=onSegment->getLen(); i++){
 						int pixelID = onSegment->getPixelID(i);
-						float dist = constrain(1-abs(i-position)/spread*2, 0, 1);
 						Color prevCol = getPixel(pixelID);
-						prevCol.add(color,dist);
+						prevCol.add(color,bri);
 						setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
+					}
+				}else{
+					float position = posFactor * (onSegment->getLen() + spread) - spread/2;
+					int startLed = position - spread/2;
+					int endLed = position + spread/2;
+					
+					for(int i=startLed; i<=endLed; i++){
+						if( i>=0 && i<onSegment->getLen() ){
+							int pixelID = onSegment->getPixelID(i);
+							float dist = constrain(1-abs(i-position)/spread*2, 0, 1);
+							Color prevCol = getPixel(pixelID);
+							prevCol.add(color,dist);
+							setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
+						}
 					}
 				}
 			}
@@ -196,8 +219,9 @@ class Beam{
 		boolean active;
 		
 	private:
-		float position;
-		float speed;
+		boolean lightUpMode;
+		float posFactor;
+		float speed;  // 
 		float spread;
 		Color color;
 		Segment *onSegment;
@@ -213,24 +237,34 @@ class Colore{
 		byte segArray_len;
 		Beam *beamArray;
 		byte beamArray_len;
+		unsigned long lastCalc; // variable to keep track of the loops per second
+		float dt;
+		
 		void (*setPixel)(int pixel, byte r, byte g, byte b);
 		void (*show)();
 		Color (*getPixel)(int);
+		void calcDt(){
+			dt = (micros() - lastCalc) / 1000000.;
+			lastCalc = micros();
+		}
 		
 	public:
-		Colore(){};
+		Colore(){
+			dt = 0.05;
+		}
 		void update(){
+			calcDt();
 			for(int i=0; i<totLedAm; i++){
 				setPixel(i,0,0,0);
 			}
 			
 			for(int i=0; i<segArray_len; i++){
-				segArray[i]->move();
+				segArray[i]->move(dt);
 				segArray[i]->draw(setPixel,getPixel);
 			}
 			
 			for(int i=0; i<beamArray_len; i++){
-				beamArray[i].move();
+				beamArray[i].move(dt);
 				beamArray[i].draw(setPixel,getPixel);
 			}
 			show();
@@ -250,11 +284,23 @@ class Colore{
 		boolean addBeam(Segment *seg, boolean dir, float spd, float len, Color col){
 			for(int i=0; i<beamArray_len; i++){
 				if( !beamArray[i].active ){
-					beamArray[i].begin(seg, dir, spd, len, col);
-					break;
+					beamArray[i].begin(seg, dir, spd, len, col, false);
+					return true;
 				}
+				return false;
 			}
 		}
+		
+		boolean lightUp(Segment *seg, float spd, Color col){
+			for(int i=0; i<beamArray_len; i++){
+				if( !beamArray[i].active ){
+					beamArray[i].begin(seg, false, 0, 0, col,true);
+					return true;
+				}
+				return false;
+			}
+		}
+		
 };
 
 
