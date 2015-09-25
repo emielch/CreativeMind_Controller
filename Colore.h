@@ -19,7 +19,7 @@ class Colore{
 	public:
 		Colore();
 		void update();
-		void begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
+		void begin(uint16_t leds, Segment **segments, byte segLen, Beam *beams, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
 		boolean addBeam(Segment *seg, boolean dir, float spd, float len, Color col);
 		boolean lightUp(Segment *seg, float spd, Color col);
 	
