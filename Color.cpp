@@ -92,15 +92,32 @@ byte Color::brightness(){
 	return HSB_color.b;
 }
 
-void Color::add(Color toAdd, float fade){
-	if(fade!=0.){
-		byte r = constrain(red() + toAdd.red()*fade, 0,255);
-		byte g = constrain(green() + toAdd.green()*fade, 0,255);
-		byte b = constrain(blue() + toAdd.blue()*fade, 0,255);
+void Color::add(Color toAdd, float fadeFac){
+	if(fadeFac!=0.){
+		byte r = constrain(red() + toAdd.red()*fadeFac, 0,255);
+		byte g = constrain(green() + toAdd.green()*fadeFac, 0,255);
+		byte b = constrain(blue() + toAdd.blue()*fadeFac, 0,255);
 		
 		setRGB(r,g,b);
 	}
-};
+}
+
+void Color::fade(Color toFade, float fadeFac){
+	if(fadeFac==1.){
+		setRGB(toFade.red(),toFade.green(),toFade.blue());
+	}else if(fadeFac!=0.){
+		byte r = constrain(red()*(1-fadeFac) + toFade.red()*fadeFac, 0,255);
+		byte g = constrain(green()*(1-fadeFac) + toFade.green()*fadeFac, 0,255);
+		byte b = constrain(blue()*(1-fadeFac) + toFade.blue()*fadeFac, 0,255);
+		
+		setRGB(r,g,b);
+	}
+}
+
+void Color::fade(Color c1, Color c2, float fadeFac){
+	setRGB(c1.red(),c1.green(),c1.blue());
+	fade(c2, fadeFac);
+}
 
 //// convert hsb to rgb
 RGB Color::HSBtoRGB(HSB *color){

@@ -7,9 +7,12 @@
 #include "Color.h"
 
 #define BLACK 0
-#define SINES 4
+#define STATIC 1
 #define RAINBOW 2
-#define STATIC 3
+#define GRADIENT 3
+#define SINES 4
+#define FADE 5
+
 
 class Segment{
 	public:
@@ -21,6 +24,8 @@ class Segment{
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
 		void setSines(Color c, float spd);
+		void setFade(Color c, float spd);
+		void setGradient(Color c1, Color c2);
 		
 	private:
 		uint16_t segLen;  // segment length
@@ -33,6 +38,8 @@ class Segment{
 		float e_len;
 		byte e_bri;
 		Color e_color;
+		Color e_fromColor;
+		Color e_toColor;
 		//---
 };
 

@@ -2,24 +2,18 @@
 #include "Beam.h"
 
 
-void Beam::begin(Segment *seg, boolean dirUp, float spd, float len, Color col, boolean lightUp){    // speed in cs/s (centiSegment per second)
+void Beam::begin(Segment *seg, boolean dirUp, float spd, float len, Color col, boolean lightUp){    // speed in animation per second
 	active = true;
 	lightUpMode = lightUp;
 	onSegment = seg;
+	speed = spd;
 	spread = len;
 	color = col;
 	int seglen = onSegment->getLen();
-	if( !lightUp ){
-		spd = seglen * spd * 0.01;  // convert to leds per second
-		if(dirUp){
-			posFactor = 0;
-			speed = spd;
-		}else{
-			posFactor = 1;
-			speed = -spd;
-		}
-	}else{
-		speed = spd * 0.01; //convert to timeto animate per second
+	posFactor = 0;
+	if(!dirUp){
+		posFactor = 1;
+		speed *= -1;
 	}
 }
 

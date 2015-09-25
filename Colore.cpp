@@ -56,7 +56,6 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color c
 			beamArray[i].begin(seg, dir, spd, len, col, false);
 			return true;
 		}
-		return false;
 	}
 	return false;
 }
@@ -64,10 +63,9 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color c
 boolean Colore::lightUp(Segment *seg, float spd, Color col){
 	for(int i=0; i<beamArray_len; i++){
 		if( !beamArray[i].isActive() ){
-			beamArray[i].begin(seg, false, 0, 0, col,true);
+			beamArray[i].begin(seg, false, spd, 0, col,true);
 			return true;
 		}
-		return false;
 	}
 	return false;
 }

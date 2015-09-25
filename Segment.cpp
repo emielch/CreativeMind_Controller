@@ -31,6 +31,20 @@ void Segment::setSines(Color c, float spd){
 	e_spd = spd;
 }
 
+void Segment::setFade(Color c, float spd){
+	effectID = FADE;
+	e_toColor = c;
+	e_fromColor = e_color;
+	e_spd = spd;
+	e_pos = 0;
+}
+
+void Segment::setGradient(Color c1, Color c2){
+	effectID = GRADIENT;
+	e_fromColor = c1;
+	e_toColor = c2;
+}
+
 void Segment::move(float dt){
 	switch (effectID) {
 		case SINES:{
@@ -41,8 +55,15 @@ void Segment::move(float dt){
 			e_pos += e_spd*dt;
 			break;
 		}
-		default:{
+		case FADE:{
 			e_pos += e_spd*dt;
+			if(e_pos >= 1){
+				setStaticColor(e_toColor);
+			}
+			break;
+		}
+		default:{
+			
 		}
 		break;
 	}
@@ -75,6 +96,28 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			
 		case STATIC:{
 			for(int i=0; i<segLen; i++){
+				Color prevCol = getPixel(getPixelID(i));
+				prevCol.add(e_color,1);
+				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+			}
+			break;
+		}
+		
+		case FADE:{
+			e_color.fade(e_fromColor, e_toColor, e_pos);
+			for(int i=0; i<segLen; i++){
+				Color prevCol = getPixel(getPixelID(i));
+				prevCol.add(e_color,1);
+				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+			}
+			break;
+		}
+		
+		case GRADIENT:{
+			for(int i=0; i<segLen; i++){
+				float fade = i*1./(segLen-1);
+				e_color.fade(e_fromColor, e_toColor, fade);
+				
 				Color prevCol = getPixel(getPixelID(i));
 				prevCol.add(e_color,1);
 				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
