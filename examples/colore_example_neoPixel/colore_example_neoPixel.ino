@@ -5,8 +5,6 @@
 #define LED_AM 60
 #define BEAM_AM 10
 
-Beam beams[BEAM_AM];
-
 
 Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_AM, PIN, NEO_GRB + NEO_KHZ800);
 
@@ -27,7 +25,7 @@ void setup(){
   leds.begin();
   
   byte segArrayLen = sizeof(segArray)/2; // for arduino: /2, for teensy: /4
-  colore.begin(LED_AM, segArray, segArrayLen, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
+  colore.begin(LED_AM, segArray, segArrayLen, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
 }
 
 

@@ -2,17 +2,31 @@
 #include "Beam.h"
 
 
-void Beam::begin(Segment *seg, boolean dirUp, float spd, float len, Color col, boolean lightUp){    // speed in animation per second
+Beam::Beam(){
+	active = false;
+}
+
+void Beam::begin(Segment *seg, boolean dirUp, float spd, byte spdMode, float len, Color col, boolean lightUp){    // speed in pixels/sec or segment/sec
 	active = true;
 	lightUpMode = lightUp;
 	onSegment = seg;
-	speed = spd;
 	spread = len;
 	color = col;
 	int seglen = onSegment->getLen();
-	posFactor = 0;
+	
+	if (spdMode==PIXEL_SPD){
+		speed = spd / seglen;
+	}
+	else if(spdMode==SEGMENT_SPD){
+		speed = spd;
+	}
+	
+	startFac = 0 - (spread/2)/seglen;
+	endFac = 1 + (spread/2)/seglen;
+	
+	posFactor = startFac;
 	if(!dirUp){
-		posFactor = 1;
+		posFactor = endFac;
 		speed *= -1;
 	}
 }
@@ -20,7 +34,7 @@ void Beam::begin(Segment *seg, boolean dirUp, float spd, float len, Color col, b
 boolean Beam::move(float dt){
 	if(active){
 		posFactor += speed*dt;
-		if( posFactor>1|| posFactor<0 ){
+		if( posFactor>endFac || posFactor<startFac ){
 			active = false;
 			return false;
 		}else{
@@ -46,7 +60,7 @@ void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)
 				setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
 			}
 		}else{
-			float position = posFactor * (onSegment->getLen() + spread) - spread/2;
+			float position = posFactor * onSegment->getLen();
 			int startLed = position - spread/2;
 			int endLed = position + spread/2;
 			

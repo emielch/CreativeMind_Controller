@@ -12,13 +12,20 @@ Colore::Colore(){
 	dt = 0.05;
 }
 
-void Colore::begin(uint16_t leds, Segment **segments, byte segLen, Beam *beams, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
+void Colore::begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
 	totLedAm = leds;
 	segArray = segments;
 	segArray_len = segLen;
 	
-	beamArray_len = beamAm;
-	beamArray = beams;
+	
+	uint16_t numBytes = beamAm * sizeof(Beam);
+
+	if((beamArray = (Beam *)malloc(numBytes))) {
+		memset(beamArray, 0, numBytes);
+		beamArray_len = beamAm;
+	} else {
+		beamAm = numBytes = 0;
+	}
 	
 	setPixel = _setPixel;
 	getPixel = _getPixel;
@@ -50,10 +57,10 @@ void Colore::calcDt(){
 	lastCalc = micros();
 }
 
-boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color col){
+boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col){
 	for(int i=0; i<beamArray_len; i++){
 		if( !beamArray[i].isActive() ){
-			beamArray[i].begin(seg, dir, spd, len, col, false);
+			beamArray[i].begin(seg, dir, spd, spdMode, len, col, false);
 			return true;
 		}
 	}
@@ -63,7 +70,7 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color c
 boolean Colore::lightUp(Segment *seg, float spd, Color col){
 	for(int i=0; i<beamArray_len; i++){
 		if( !beamArray[i].isActive() ){
-			beamArray[i].begin(seg, false, spd, 0, col,true);
+			beamArray[i].begin(seg, false, spd, SEGMENT_SPD, 0, col,true);
 			return true;
 		}
 	}

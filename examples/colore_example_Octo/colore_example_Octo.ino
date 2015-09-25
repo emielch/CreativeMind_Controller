@@ -5,8 +5,6 @@
 #define LED_AM 60
 #define BEAM_AM 10
 
-Beam beams[BEAM_AM];
-
 const int ledsPerStrip = LED_AM;
 DMAMEM int displayMemory[ledsPerStrip*6];
 int drawingMemory[ledsPerStrip*6];
@@ -30,7 +28,7 @@ void setup(){
   leds.begin();
   
   byte segArrayLen = sizeof(segArray)/4; // for arduino: /2, for teensy: /4
-  colore.begin(LED_AM, segArray, segArrayLen, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
+  colore.begin(LED_AM, segArray, segArrayLen, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
 }
 
 
