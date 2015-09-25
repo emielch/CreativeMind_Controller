@@ -8,15 +8,24 @@ Created by Emiel Harmsen 14-1-2015.
 
 
 
-void Colore::calcDt(){
-	dt = (micros() - lastCalc) / 1000000.;
-	lastCalc = micros();
-}
-
-
 Colore::Colore(){
 	dt = 0.05;
 }
+
+void Colore::begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
+	totLedAm = leds;
+	segArray = segments;
+	segArray_len = segLen;
+	
+	beamArray_len = beamAm;
+	Beam beams[beamArray_len];
+	beamArray = beams;
+	
+	setPixel = _setPixel;
+	getPixel = _getPixel;
+	showPixels = _showPixels;
+}
+
 void Colore::update(){
 	calcDt();
 	for(int i=0; i<totLedAm; i++){
@@ -32,23 +41,17 @@ void Colore::update(){
 		beamArray[i].move(dt);
 		beamArray[i].draw(setPixel,getPixel);
 	}
-	show();
+	showPixels();
 }
 
-void Colore::begin(uint16_t leds, Segment **segments, byte segLen, Beam *beams, byte beamLen, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_show)()){
-	totLedAm = leds;
-	segArray = segments;
-	segArray_len = segLen;
-	beamArray = beams;
-	beamArray_len = beamLen;
-	setPixel = _setPixel;
-	getPixel = _getPixel;
-	show = _show;
+void Colore::calcDt(){
+	dt = (micros() - lastCalc) / 1000000.;  // assume one frame per second
+	lastCalc = micros();
 }
 
 boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color col){
 	for(int i=0; i<beamArray_len; i++){
-		if( !beamArray[i].active ){
+		if( !beamArray[i].isActive() ){
 			beamArray[i].begin(seg, dir, spd, len, col, false);
 			return true;
 		}
@@ -58,7 +61,7 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, float len, Color c
 
 boolean Colore::lightUp(Segment *seg, float spd, Color col){
 	for(int i=0; i<beamArray_len; i++){
-		if( !beamArray[i].active ){
+		if( !beamArray[i].isActive() ){
 			beamArray[i].begin(seg, false, 0, 0, col,true);
 			return true;
 		}

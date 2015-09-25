@@ -26,7 +26,6 @@ void Beam::begin(Segment *seg, boolean dirUp, float spd, float len, Color col, b
 boolean Beam::move(float dt){
 	if(active){
 		posFactor += speed*dt;
-		uint16_t segLen = onSegment->getLen();
 		if( posFactor>1|| posFactor<0 ){
 			active = false;
 			return false;
@@ -34,6 +33,7 @@ boolean Beam::move(float dt){
 			return true;
 		}
 	}
+	return false;
 }
 
 void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
@@ -67,4 +67,8 @@ void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)
 			}
 		}
 	}
+}
+
+boolean Beam::isActive(){
+	return active;
 }

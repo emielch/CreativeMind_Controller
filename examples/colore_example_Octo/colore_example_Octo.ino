@@ -2,11 +2,10 @@
 #include <OctoWS2811.h>
 
 #define PIN 6
-#define LEDS 60
-#define BEAMS 10
-Beam beams[BEAMS];
+#define LED_AM 60
+#define BEAM_AM 10
 
-const int ledsPerStrip = LEDS;
+const int ledsPerStrip = LED_AM;
 DMAMEM int displayMemory[ledsPerStrip*6];
 int drawingMemory[ledsPerStrip*6];
 const int config = WS2811_GRB | WS2811_800kHz;
@@ -27,7 +26,7 @@ Segment *segArray[] = {
 
 void setup(){
   leds.begin();
-  colore.begin(LEDS, segArray, sizeof(segArray)/4, beams, BEAMS, &set_ledLib, &get_ledLib, &show_ledLib );
+  colore.begin(LED_AM, segArray, sizeof(segArray)/4, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
 }
 
 
