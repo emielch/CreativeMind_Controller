@@ -17,19 +17,13 @@ void Colore::begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, 
 	segArray = segments;
 	segArray_len = segLen;
 	
-	
-	uint16_t numBytes = beamAm * sizeof(Beam);
-
-	if((beamArray = (Beam *)malloc(numBytes))) {
-		memset(beamArray, 0, numBytes);
-		beamArray_len = beamAm;
-	} else {
-		beamAm = numBytes = 0;
-	}
+	beamControl.begin(beamAm);
+	neural.begin(&beamControl);
 	
 	setPixel = _setPixel;
 	getPixel = _getPixel;
 	showPixels = _showPixels;
+
 }
 
 void Colore::update(){
@@ -44,9 +38,14 @@ void Colore::update(){
 		segArray[i]->draw(setPixel,getPixel);
 	}
 
-	for(int i=0; i<beamArray_len; i++){
-		beamArray[i].move(dt);
-		beamArray[i].draw(setPixel,getPixel);
+	for(int i=0; i<beamControl.beamArray_len; i++){
+		beamControl.beamArray[i].move(dt);
+		if ( beamControl.beamArray[i].isNeuralMode() ){
+			if( beamControl.beamArray[i].justArrived() ){
+				neural.arriveBeam( &beamControl.beamArray[i] );
+			}
+		}
+		beamControl.beamArray[i].draw(setPixel,getPixel);
 	}
 
 	showPixels();
@@ -57,22 +56,20 @@ void Colore::calcDt(){
 	lastCalc = micros();
 }
 
+float Colore::getDt(){
+	return dt;
+}
+
 boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col){
-	for(int i=0; i<beamArray_len; i++){
-		if( !beamArray[i].isActive() ){
-			beamArray[i].begin(seg, dir, spd, spdMode, len, col, false);
-			return true;
-		}
-	}
-	return false;
+	Beam* newBeam = beamControl.freeBeam();
+	if(newBeam == NULL) return false;
+	newBeam->begin(seg, dir, spd, spdMode, len, col, PULSE);
+	return true;
 }
 
 boolean Colore::lightUp(Segment *seg, float spd, Color col){
-	for(int i=0; i<beamArray_len; i++){
-		if( !beamArray[i].isActive() ){
-			beamArray[i].begin(seg, false, spd, SEGMENT_SPD, 0, col,true);
-			return true;
-		}
-	}
-	return false;
+	Beam* newBeam = beamControl.freeBeam();
+	if(newBeam == NULL) return false;
+	newBeam->begin(seg, false, spd, SEGMENT_SPD, 0, col, FLASH);
+	return true;
 }

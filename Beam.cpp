@@ -6,47 +6,72 @@ Beam::Beam(){
 	active = false;
 }
 
-void Beam::begin(Segment *seg, boolean dirUp, float spd, byte spdMode, float len, Color col, boolean lightUp){    // speed in pixels/sec or segment/sec
+void Beam::begin(Segment *seg, boolean dir, float spd, byte _spdMode, float len, Color col, byte _mode){    // speed in pixels/sec or segment/sec
 	active = true;
-	lightUpMode = lightUp;
+	mode = _mode;
 	onSegment = seg;
 	spread = len;
 	color = col;
+	spdMode = _spdMode;
 	int seglen = onSegment->getLen();
 	
 	if (spdMode==PIXEL_SPD){
-		speed = spd / seglen;
+		pixelSpd = spd;
+		segSpd = spd / seglen;
 	}
 	else if(spdMode==SEGMENT_SPD){
-		speed = spd;
+		segSpd = spd;
 	}
 	
 	startFac = 0 - (spread/2)/seglen;
 	endFac = 1 + (spread/2)/seglen;
 	
 	posFactor = startFac;
-	if(!dirUp){
+	if(dir == DOWN){
 		posFactor = endFac;
-		speed *= -1;
+		segSpd *= -1;
 	}
 }
 
-boolean Beam::move(float dt){
+void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power){
+	power = _power;
+	begin(seg, dir, spd, spdMode, len, col, _mode);
+}
+
+void Beam::move(float dt){
 	if(active){
-		posFactor += speed*dt;
+		posFactor += segSpd*dt;
 		if( posFactor>endFac || posFactor<startFac ){
 			active = false;
-			return false;
-		}else{
-			return true;
 		}
+	}
+}
+
+boolean Beam::justArrived(){
+	if( posFactor>=1 || posFactor<=0 ){
+		return true;
+	}
+	return false;
+}
+
+boolean Beam::alreadyArrived(){
+	return arrived;
+}
+
+void Beam::arrive(){
+	arrived = true;
+}
+
+boolean Beam::isNeuralMode(){
+	if( mode==NEURAL ){
+		return true;
 	}
 	return false;
 }
 
 void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
 	if(active){
-		if(lightUpMode){
+		if(mode == FLASH){
 			float bri;
 			if(posFactor<0.5){
 				bri = posFactor*2;
@@ -59,7 +84,7 @@ void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)
 				prevCol.add(color,bri);
 				setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
 			}
-		}else{
+		}else if(mode == PULSE || mode == NEURAL){
 			float position = posFactor * onSegment->getLen();
 			int startLed = position - spread/2;
 			int endLed = position + spread/2;

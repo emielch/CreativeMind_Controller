@@ -2,13 +2,19 @@
 #include "Segment.h"
 
 
-Segment::Segment(int len, uint16_t *_ledArray){
-	segLen = len;
+Segment::Segment(int _segLen, uint16_t *_ledArray){
+	segLen = _segLen;
 	ledArray = _ledArray;
 	effectID = 0;  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
 	e_len = 0;
+}
+
+void Segment::setNN(boolean _nnType, int _connAm, Segment* _connSeg){
+	nnType = _nnType;
+	connAm = _connAm;
+	connSeg = _connSeg;
 }
 
 void Segment::setRainbow(float spd, float len, byte bri){
@@ -39,6 +45,15 @@ void Segment::setFade(Color c, float spd){
 	e_pos = 0;
 }
 
+void Segment::setFadeInOut(Color c, float inSpd, float outSpd){
+	effectID = FADEINOUT;
+	e_toColor = c;
+	e_fromColor = e_color;
+	e_spd = inSpd;
+	e_outSpd = outSpd;
+	e_pos = 0;
+}
+
 void Segment::setGradient(Color c1, Color c2){
 	effectID = GRADIENT;
 	e_fromColor = c1;
@@ -59,6 +74,14 @@ void Segment::move(float dt){
 			e_pos += e_spd*dt;
 			if(e_pos >= 1){
 				setStaticColor(e_toColor);
+			}
+			break;
+		}
+		case FADEINOUT:{
+			e_pos += e_spd*dt;
+			if(e_pos >= 2){
+				Color black(0,0,0,RGB_MODE);
+				setStaticColor(black);
 			}
 			break;
 		}
@@ -103,8 +126,13 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			break;
 		}
 		
-		case FADE:{
-			e_color.fade(e_fromColor, e_toColor, e_pos);
+		case FADE: case FADEINOUT:{
+			if( e_pos <= 1 ){
+				e_color.fade(e_fromColor, e_toColor, e_pos);
+			}else{
+				Color black(0,0,0,RGB_MODE);
+				e_color.fade(e_toColor, black, e_pos-1);
+			}
 			for(int i=0; i<segLen; i++){
 				Color prevCol = getPixel(getPixelID(i));
 				prevCol.add(e_color,1);

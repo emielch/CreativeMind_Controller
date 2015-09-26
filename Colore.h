@@ -1,5 +1,5 @@
 /*
-Colore.h - Library for saving colors
+Colore.h - Library for making LED animations
 Created by Emiel Harmsen 14-1-2015.
 */
 
@@ -10,6 +10,8 @@ Created by Emiel Harmsen 14-1-2015.
 #include "Color.h"
 #include "Segment.h"
 #include "Beam.h"
+#include "BeamControl.h"
+#include "Neural.h"
 
 
 
@@ -21,14 +23,15 @@ class Colore{
 		void update();
 		void begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
 		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
+		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		boolean lightUp(Segment *seg, float spd, Color col);
+		float getDt();
+		Neural neural;
 	
 	private:
 		uint16_t totLedAm;
 		Segment **segArray;
 		byte segArray_len;
-		Beam *beamArray;
-		byte beamArray_len;
 		unsigned long lastCalc; // variable to keep track of the loops per second
 		float dt;
 		
@@ -36,6 +39,8 @@ class Colore{
 		void (*showPixels)();
 		Color (*getPixel)(int);
 		void calcDt();
+		
+		BeamControl beamControl;
 };
 
 
