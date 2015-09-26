@@ -21,7 +21,7 @@ class Neural{
 		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		BeamControl *beamControl;
 		
-		int beamDecay = 50;
+		int beamDecay = 20;
 		
 };
 

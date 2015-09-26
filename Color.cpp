@@ -102,6 +102,27 @@ void Color::add(Color toAdd, float fadeFac){
 	}
 }
 
+void Color::addHDR(Color toAdd, float fadeFac){
+	if(fadeFac!=0.){
+		int r = red() + toAdd.red()*fadeFac;
+		int g = green() + toAdd.green()*fadeFac;
+		int b = blue() + toAdd.blue()*fadeFac;
+		
+		int maxVal = r;
+		if( g > maxVal ) maxVal = g;
+		if( b > maxVal ) maxVal = b;
+		
+		if( maxVal > 255){
+			float mult = 255./maxVal;
+			r *= mult;
+			g *= mult;
+			b *= mult;
+		}
+		
+		setRGB(r,g,b);
+	}
+}
+
 void Color::fade(Color toFade, float fadeFac){
 	if(fadeFac==1.){
 		setRGB(toFade.red(),toFade.green(),toFade.blue());

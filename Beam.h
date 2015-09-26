@@ -26,12 +26,12 @@ class Beam{
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		boolean isActive();
 		boolean justArrived();
-		boolean alreadyArrived();
 		void arrive();
 		boolean isNeuralMode();
 		
 		float segSpd;
 		float pixelSpd;
+		boolean dir; // UP or DOWN
 		float spread;
 		Color color;
 		Segment *onSegment;
@@ -47,6 +47,7 @@ class Beam{
 		float posFactor;
 		float startFac;
 		float endFac;
+		float spreadFac;
 };
 
 #endif

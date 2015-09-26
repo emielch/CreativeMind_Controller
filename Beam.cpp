@@ -6,12 +6,14 @@ Beam::Beam(){
 	active = false;
 }
 
-void Beam::begin(Segment *seg, boolean dir, float spd, byte _spdMode, float len, Color col, byte _mode){    // speed in pixels/sec or segment/sec
+void Beam::begin(Segment *seg, boolean _dir, float spd, byte _spdMode, float len, Color col, byte _mode){    // speed in pixels/sec or segment/sec
 	active = true;
+	arrived = false;
 	mode = _mode;
 	onSegment = seg;
 	spread = len;
 	color = col;
+	dir = _dir;
 	spdMode = _spdMode;
 	int seglen = onSegment->getLen();
 	
@@ -22,15 +24,11 @@ void Beam::begin(Segment *seg, boolean dir, float spd, byte _spdMode, float len,
 	else if(spdMode==SEGMENT_SPD){
 		segSpd = spd;
 	}
+	spreadFac = (spread/2)/seglen;
+	startFac = 0 - spreadFac;
+	endFac = 1 + spreadFac;
 	
-	startFac = 0 - (spread/2)/seglen;
-	endFac = 1 + (spread/2)/seglen;
-	
-	posFactor = startFac;
-	if(dir == DOWN){
-		posFactor = endFac;
-		segSpd *= -1;
-	}
+	posFactor = ((dir == UP) ? startFac : endFac);
 }
 
 void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power){
@@ -40,7 +38,7 @@ void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, 
 
 void Beam::move(float dt){
 	if(active){
-		posFactor += segSpd*dt;
+		posFactor += segSpd*dt * ((dir == UP) ? 1 : -1);
 		if( posFactor>endFac || posFactor<startFac ){
 			active = false;
 		}
@@ -48,14 +46,14 @@ void Beam::move(float dt){
 }
 
 boolean Beam::justArrived(){
-	if( posFactor>=1 || posFactor<=0 ){
-		return true;
+	if (arrived) return false;
+	if( dir == UP ){
+		if( posFactor >= 1-spreadFac ) return true;
+	}
+	if( dir == DOWN ){
+		if( posFactor <= 0+spreadFac ) return true;
 	}
 	return false;
-}
-
-boolean Beam::alreadyArrived(){
-	return arrived;
 }
 
 void Beam::arrive(){

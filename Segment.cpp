@@ -11,7 +11,7 @@ Segment::Segment(int _segLen, uint16_t *_ledArray){
 	e_len = 0;
 }
 
-void Segment::setNN(boolean _nnType, int _connAm, Segment* _connSeg){
+void Segment::setNN(boolean _nnType, int _connAm, Segment **_connSeg){
 	nnType = _nnType;
 	connAm = _connAm;
 	connSeg = _connSeg;
@@ -60,6 +60,10 @@ void Segment::setGradient(Color c1, Color c2){
 	e_toColor = c2;
 }
 
+Color Segment::getCurrentColor(){
+	return e_color;
+}
+
 void Segment::move(float dt){
 	switch (effectID) {
 		case SINES:{
@@ -78,7 +82,7 @@ void Segment::move(float dt){
 			break;
 		}
 		case FADEINOUT:{
-			e_pos += e_spd*dt;
+			e_pos +=  ((e_pos <= 1) ? e_spd : e_outSpd) * dt;
 			if(e_pos >= 2){
 				Color black(0,0,0,RGB_MODE);
 				setStaticColor(black);
