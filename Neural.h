@@ -13,7 +13,9 @@ class Neural{
 	public:
 		Neural();
 		void begin(BeamControl *_beamControl);
-		void startBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power );
+		void startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power );
+		void startSynapseBeam(Segment *neuron, boolean dir, float _spd, byte _spdMode, float _len, Color _col, int _power );
+		
 		void arriveBeam(Beam *beam);
 	
 	private:
@@ -22,6 +24,7 @@ class Neural{
 		BeamControl *beamControl;
 		
 		int beamDecay = 20;
+		boolean allowDirectSynapse = false;
 		
 };
 

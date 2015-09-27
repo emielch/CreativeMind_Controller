@@ -12,7 +12,7 @@ Colore::Colore(){
 	dt = 0.05;
 }
 
-void Colore::begin(uint16_t leds, Segment **segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
+void Colore::begin(uint16_t leds, Segment *segments, byte segLen, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
 	totLedAm = leds;
 	segArray = segments;
 	segArray_len = segLen;
@@ -34,8 +34,8 @@ void Colore::update(){
 	}
 
 	for(int i=0; i<segArray_len; i++){
-		segArray[i]->move(dt);
-		segArray[i]->draw(setPixel,getPixel);
+		segArray[i].move(dt);
+		segArray[i].draw(setPixel,getPixel);
 	}
 
 	for(int i=0; i<beamControl.beamArray_len; i++){

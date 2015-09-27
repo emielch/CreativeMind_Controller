@@ -11,8 +11,16 @@ void Neural::begin(BeamControl *_beamControl){
 
 
 
-void Neural::startBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power ){
+void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power ){
+	
+	// stop if the segment not a NEURON
+	if( neuron->nnType!=NEURON){
+		Serial.println("Segment is not a NEURON");
+		return;
+	} 
+	
 	byte nextSegId;
+	//Serial.println(neuron->connAm);
 	
 	// if the neuron has only one connection choose that one
 	if( neuron->connAm == 1 ) nextSegId = 0;
@@ -57,12 +65,23 @@ void Neural::startBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdM
 	neurCol.addHDR( _col, 1 );
 	neuron->setFadeInOut(neurCol,2,0.5);
 	
+	startSynapseBeam(nextSynapse, dir, _spd, _spdMode, _len, _col, _power);
+}
+
+
+void Neural::startSynapseBeam(Segment *synapse, boolean dir, float _spd, byte _spdMode, float _len, Color _col, int _power ){
+	if( synapse->nnType != SYNAPSE ){
+		Serial.println("Segment is not a SYNAPSE");
+		return;
+	}
+	
 	// send the pulse in the neural network
-	addNNBeam(nextSynapse, dir, _spd, _spdMode, _len, _col, _power);
+	addNNBeam(synapse, dir, _spd, _spdMode, _len, _col, _power);
 }
 
 
 void Neural::arriveBeam(Beam *beam){
+	//Serial.println("beam arrived");
 	beam->arrive();
 	
 	// stop if arrived at dead end
@@ -71,12 +90,12 @@ void Neural::arriveBeam(Beam *beam){
 		return;
 	}
 	
-	// determine the neuron it arrived at
+	// determine the segment it arrived at
 	byte connId = ((beam->dir == UP) ? 1 : 0);
-	Segment *nextNeuron = beam->onSegment->connSeg[connId];
+	Segment *nextSegment = beam->onSegment->connSeg[connId];
 	
-	//check if the segment is actually a neuron
-	if( nextNeuron->nnType != NEURON){
+	//check the type of the next segment
+	if( nextSegment->nnType == SYNAPSE && !allowDirectSynapse){
 		Serial.println("The beam has arrived at not a NEURON");
 		return;
 	}
@@ -95,7 +114,14 @@ void Neural::arriveBeam(Beam *beam){
 	}
 
 	// create the next beam
-	startBeam(nextNeuron, beam->onSegment, spd, spdMode, beam->spread, beam->color, newPower);
+	if (nextSegment->nnType == SYNAPSE){
+		boolean dir = DOWN;
+		if( nextSegment->connSeg[0] == beam->onSegment) dir = UP;
+		startSynapseBeam(nextSegment, dir, spd, spdMode, beam->spread, beam->color, newPower);
+	}else{
+		startNeuronBeam(nextSegment, beam->onSegment, spd, spdMode, beam->spread, beam->color, newPower);
+	}
+	
 }
 
 
