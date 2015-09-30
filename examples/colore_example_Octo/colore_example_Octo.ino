@@ -5,6 +5,8 @@
 #define LED_AM 60
 #define BEAM_AM 10
 
+Beam beams[BEAM_AM];
+
 const int ledsPerStrip = LED_AM;
 DMAMEM int displayMemory[ledsPerStrip*6];
 int drawingMemory[ledsPerStrip*6];
@@ -14,21 +16,18 @@ OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 uint16_t leds1[] = {0,1,2,3,4};
 uint16_t leds2[] = {5,6,7,8,9,10,11,12,13,14,15,16,17};
 
-Segment seg1( sizeof(leds1)/2, leds1 );
-Segment seg2( sizeof(leds2)/2, leds2 );
-
 Colore colore;
 
-Segment *segArray[] = {
-  &seg1,
-  &seg2
+Segment segArray[] = {
+  Segment ( sizeof(leds1)/2, leds1 ),
+  Segment ( sizeof(leds2)/2, leds2 )
 };
 
 void setup(){
   leds.begin();
   
   byte segArrayLen = sizeof(segArray)/4; // for arduino: /2, for teensy: /4
-  colore.begin(LED_AM, segArray, segArrayLen, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
+  colore.begin(LED_AM, segArray, segArrayLen, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib );
 }
 
 

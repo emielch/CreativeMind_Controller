@@ -53,6 +53,7 @@ class Segment{
 		Color e_color;
 		Color e_fromColor;
 		Color e_toColor;
+		// Color e_outColor;  // adding this makes the teensy crash... :(
 		//---
 };
 

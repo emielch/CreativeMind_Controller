@@ -9,7 +9,7 @@
 class BeamControl{
 	public:
 		BeamControl();
-		void begin(byte beamAm);
+		void begin(Beam *beams, byte beamAm);
 		Beam* freeBeam();
 		
 		Beam *beamArray;
