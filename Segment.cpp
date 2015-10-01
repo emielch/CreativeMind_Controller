@@ -48,6 +48,10 @@ void Segment::setRainbow(float spd, float len, byte bri){
 }
 
 void Segment::setStaticColor(Color c){
+	if(c.brightness() == 0){
+		effectID = BLACK;
+		return;
+	}
 	effectID = STATIC;
 	e_color = c;
 }

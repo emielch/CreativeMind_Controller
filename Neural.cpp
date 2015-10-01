@@ -63,8 +63,8 @@ void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte
 	// animate the neuron
 	Color neurCol = neuron->getCurrentColor();
 	neurCol.addHDR( _col, 1 );
-	Color neurBGColor(0,0,100,HSB_MODE);
-	neuron->setFadeInOut(neurCol,neurBGColor,2,0.5);
+	Color neurBGColor(0,0,neuron->power,HSB_MODE);
+	neuron->setFadeInOut(neurCol,neurBGColor,8,0.3);
 	
 	startSynapseBeam(nextSynapse, dir, _spd, _spdMode, _len, _col, _power);
 }
@@ -104,7 +104,7 @@ void Neural::arriveBeam(Beam *beam){
 	// increase the power of the segment it arrived at, accoring to the power of the beam
 	// and discharge the neuron if neccesary
 	if(nextSegment->nnType == NEURON){
-		nextSegment->power += 10;
+		nextSegment->power += constrain(beam->power,0,100) * 0.05;
 		if(nextSegment->power >= 100){
 			neuronDischarge(nextSegment, beam->color.hue());
 		}
@@ -143,7 +143,7 @@ void Neural::neuronDischarge(Segment *neuron, int hue){
 	neuron->power = 0;
 	
 	// get some variables for the new beam
-	int spd = 100;
+	int spd = 50;
 	int power = 100;
 	Color col(hue,100,100,HSB_MODE);
 	

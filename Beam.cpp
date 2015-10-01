@@ -48,10 +48,10 @@ void Beam::move(float dt){
 boolean Beam::justArrived(){
 	if (arrived) return false;
 	if( dir == UP ){
-		if( posFactor >= 1-spreadFac ) return true;
+		if( posFactor >= 1-spreadFac/4 ) return true;
 	}
 	if( dir == DOWN ){
-		if( posFactor <= 0+spreadFac ) return true;
+		if( posFactor <= 0+spreadFac/4 ) return true;
 	}
 	return false;
 }
