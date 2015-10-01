@@ -29,12 +29,12 @@ class Beam{
 		void arrive();
 		boolean isNeuralMode();
 		
+		Segment *onSegment;
 		float segSpd;
 		float pixelSpd;
 		boolean dir; // UP or DOWN
 		float spread;
 		Color color;
-		Segment *onSegment;
 		byte spdMode;
 		
 		//-- NN

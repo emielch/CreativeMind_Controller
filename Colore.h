@@ -20,9 +20,10 @@ Created by Emiel Harmsen 14-1-2015.
 class Colore{
 	public:
 		Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)());
+		void beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse);
 		void update();
 		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
-		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
+		boolean addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power);
 		boolean lightUp(Segment *seg, float spd, Color col);
 		float getDt();
 		Neural neural;
@@ -31,6 +32,8 @@ class Colore{
 		uint16_t totLedAm;
 		Segment *segArray;
 		byte segArray_len;
+		boolean neuralMode;
+		
 		unsigned long lastCalc; // variable to keep track of the loops per second
 		float dt;
 		

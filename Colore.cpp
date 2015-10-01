@@ -14,13 +14,19 @@ Colore::Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, b
 	segArray = segments;
 	segArray_len = segLen;
 	
-	beamControl.begin(beamArray,beamAm);
-	neural.begin(&beamControl);
-	
 	setPixel = _setPixel;
 	getPixel = _getPixel;
 	showPixels = _showPixels;
 	resetPixels = _resetPixels;
+	
+	neuralMode = false;
+	
+	beamControl.begin(beamArray,beamAm,setPixel,getPixel);
+}
+
+void Colore::beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse){
+	neural.begin(bDec, nCharge, _DCSpd, _DCPower, _DCSpread, _DCSpdMode, directSynapse, fadeInSpd, fadeOutSpd, &beamControl);
+	neuralMode = true;
 }
 
 void Colore::update(){
@@ -32,18 +38,10 @@ void Colore::update(){
 		segArray[i].move(dt);
 		segArray[i].draw(setPixel,getPixel);
 	}
-
-	for(int i=0; i<beamControl.beamArray_len; i++){
-		if( beamControl.beamArray[i].isActive() ){
-			beamControl.beamArray[i].move(dt);
-			if ( beamControl.beamArray[i].isNeuralMode() ){
-				if( beamControl.beamArray[i].justArrived() ){
-					neural.arriveBeam( &beamControl.beamArray[i] );
-				}
-			}
-			beamControl.beamArray[i].draw(setPixel,getPixel);
-		}
-	}
+	
+	beamControl.update(dt);
+	
+	if(neuralMode)	neural.update();
 
 	showPixels();
 }
@@ -62,6 +60,10 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, floa
 	if(newBeam == NULL) return false;
 	newBeam->begin(seg, dir, spd, spdMode, len, col, PULSE);
 	return true;
+}
+
+boolean Colore::addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power){
+	return neural.startNeuronBeam(seg, NULL, spd, spdMode, len, col, power, true);
 }
 
 boolean Colore::lightUp(Segment *seg, float spd, Color col){

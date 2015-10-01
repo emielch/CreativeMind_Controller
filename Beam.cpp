@@ -37,11 +37,9 @@ void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, 
 }
 
 void Beam::move(float dt){
-	if(active){
-		posFactor += segSpd*dt * ((dir == UP) ? 1 : -1);
-		if( posFactor>endFac || posFactor<startFac ){
-			active = false;
-		}
+	posFactor += segSpd*dt * ((dir == UP) ? 1 : -1);
+	if( posFactor>endFac || posFactor<startFac ){
+		active = false;
 	}
 }
 
@@ -68,33 +66,31 @@ boolean Beam::isNeuralMode(){
 }
 
 void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
-	if(active){
-		if(mode == FLASH){
-			float bri;
-			if(posFactor<0.5){
-				bri = posFactor*2;
-			}else{
-				bri = 1 - (posFactor*2 - 1);
-			}
-			for(int i=0; i<=onSegment->getLen(); i++){
+	if(mode == FLASH){
+		float bri;
+		if(posFactor<0.5){
+			bri = posFactor*2;
+		}else{
+			bri = 1 - (posFactor*2 - 1);
+		}
+		for(int i=0; i<=onSegment->getLen(); i++){
+			int pixelID = onSegment->getPixelID(i);
+			Color prevCol = getPixel(pixelID);
+			prevCol.add(color,bri);
+			setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
+		}
+	}else if(mode == PULSE || mode == NEURAL){
+		float position = posFactor * onSegment->getLen();
+		int startLed = position - spread/2;
+		int endLed = position + spread/2;
+		
+		for(int i=startLed; i<=endLed; i++){
+			if( i>=0 && i<onSegment->getLen() ){
 				int pixelID = onSegment->getPixelID(i);
+				float dist = constrain(1-abs(i-position)/spread*2, 0, 1);
 				Color prevCol = getPixel(pixelID);
-				prevCol.add(color,bri);
+				prevCol.add(color,dist);
 				setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
-			}
-		}else if(mode == PULSE || mode == NEURAL){
-			float position = posFactor * onSegment->getLen();
-			int startLed = position - spread/2;
-			int endLed = position + spread/2;
-			
-			for(int i=startLed; i<=endLed; i++){
-				if( i>=0 && i<onSegment->getLen() ){
-					int pixelID = onSegment->getPixelID(i);
-					float dist = constrain(1-abs(i-position)/spread*2, 0, 1);
-					Color prevCol = getPixel(pixelID);
-					prevCol.add(color,dist);
-					setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
-				}
 			}
 		}
 	}
