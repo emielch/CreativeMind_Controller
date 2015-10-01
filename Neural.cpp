@@ -5,17 +5,17 @@ Neural::Neural(){
 	
 }
 
+
 void Neural::begin(BeamControl *_beamControl){
 	beamControl = _beamControl;
 }
-
 
 
 void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power ){
 	
 	// stop if the segment not a NEURON
 	if( neuron->nnType!=NEURON){
-		Serial.println("Segment is not a NEURON");
+		Serial.println(F("Segment is not a NEURON"));
 		return;
 	} 
 	
@@ -27,7 +27,7 @@ void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte
 	
 	// stop if neuron has no connections
 	else if( neuron->connAm == 0 ){
-		Serial.println("Neuron has no connections, arrived at dead end");
+		Serial.println(F("Neuron has no connections, arrived at dead end"));
 		return;
 	}
 	
@@ -63,7 +63,8 @@ void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte
 	// animate the neuron
 	Color neurCol = neuron->getCurrentColor();
 	neurCol.addHDR( _col, 1 );
-	neuron->setFadeInOut(neurCol,2,0.5);
+	Color neurBGColor(0,0,100,HSB_MODE);
+	neuron->setFadeInOut(neurCol,neurBGColor,2,0.5);
 	
 	startSynapseBeam(nextSynapse, dir, _spd, _spdMode, _len, _col, _power);
 }
@@ -71,7 +72,7 @@ void Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte
 
 void Neural::startSynapseBeam(Segment *synapse, boolean dir, float _spd, byte _spdMode, float _len, Color _col, int _power ){
 	if( synapse->nnType != SYNAPSE ){
-		Serial.println("Segment is not a SYNAPSE");
+		Serial.println(F("Segment is not a SYNAPSE"));
 		return;
 	}
 	
@@ -81,12 +82,12 @@ void Neural::startSynapseBeam(Segment *synapse, boolean dir, float _spd, byte _s
 
 
 void Neural::arriveBeam(Beam *beam){
-	//Serial.println("beam arrived");
+	//Serial.println(F("beam arrived"));
 	beam->arrive();
 	
 	// stop if arrived at dead end
 	if( beam->onSegment->connAm == 0 || beam->onSegment->connAm == 1 ){
-		Serial.println("Arrived at a dead end");
+		Serial.println(F("Arrived at a dead end"));
 		return;
 	}
 	
@@ -96,8 +97,17 @@ void Neural::arriveBeam(Beam *beam){
 	
 	//check the type of the next segment
 	if( nextSegment->nnType == SYNAPSE && !allowDirectSynapse){
-		Serial.println("The beam has arrived at not a NEURON");
+		Serial.println(F("The beam has arrived at not a NEURON"));
 		return;
+	}
+	
+	// increase the power of the segment it arrived at, accoring to the power of the beam
+	// and discharge the neuron if neccesary
+	if(nextSegment->nnType == NEURON){
+		nextSegment->power += 0.5*beam->power;
+		if(nextSegment->power >= 100){
+			neuronDischarge(nextSegment, beam->color.hue());
+		}
 	}
 	
 	// calc the new power of the beam, stop if no power left
@@ -125,8 +135,29 @@ void Neural::arriveBeam(Beam *beam){
 }
 
 
-void Neural::neuronDischarge(Segment *neuron){
+void Neural::neuronDischarge(Segment *neuron, int hue){
+	// animate the neuron
+	Color white(255,255,255,RGB_MODE);
+	Color black(0,0,0,RGB_MODE);
+	neuron->setFadeInOut(white,black,8,0.5);
+	neuron->power = 0;
 	
+	// get some variables for the new beam
+	int spd = 40;
+	int power = 100;
+	Color col(hue,100,100,HSB_MODE);
+	
+	// fire beams in all directions
+	for (int i=0; i<neuron->connAm; i++){
+		Segment *nextSynapse = neuron->connSeg[i];
+		
+		// determine the correct direction for the beam
+		boolean dir = DOWN;
+		if( nextSynapse->connSeg[0] == neuron ) dir = UP;
+		
+		// fire the beam
+		startSynapseBeam(nextSynapse, dir, spd, PIXEL_SPD, 10, col, power);
+	}
 }
 
 boolean Neural::addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power){
