@@ -39,13 +39,15 @@ void Colore::update(){
 	}
 
 	for(int i=0; i<beamControl.beamArray_len; i++){
-		beamControl.beamArray[i].move(dt);
-		if ( beamControl.beamArray[i].isNeuralMode() ){
-			if( beamControl.beamArray[i].justArrived() ){
-				neural.arriveBeam( &beamControl.beamArray[i] );
+		if( beamControl.beamArray[i].isActive() ){
+			beamControl.beamArray[i].move(dt);
+			if ( beamControl.beamArray[i].isNeuralMode() ){
+				if( beamControl.beamArray[i].justArrived() ){
+					neural.arriveBeam( &beamControl.beamArray[i] );
+				}
 			}
+			beamControl.beamArray[i].draw(setPixel,getPixel);
 		}
-		beamControl.beamArray[i].draw(setPixel,getPixel);
 	}
 
 	showPixels();
