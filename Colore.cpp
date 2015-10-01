@@ -8,11 +8,8 @@ Created by Emiel Harmsen 14-1-2015.
 
 
 
-Colore::Colore(){
+Colore::Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
 	dt = 0.05;
-}
-
-void Colore::begin(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
 	totLedAm = leds;
 	segArray = segments;
 	segArray_len = segLen;

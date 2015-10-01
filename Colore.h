@@ -19,9 +19,8 @@ Created by Emiel Harmsen 14-1-2015.
 
 class Colore{
 	public:
-		Colore();
+		Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
 		void update();
-		void begin(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
 		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
 		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		boolean lightUp(Segment *seg, float spd, Color col);
