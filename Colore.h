@@ -19,7 +19,7 @@ Created by Emiel Harmsen 14-1-2015.
 
 class Colore{
 	public:
-		Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)());
+		Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)());
 		void update();
 		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
 		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
@@ -36,6 +36,7 @@ class Colore{
 		
 		void (*setPixel)(int pixel, byte r, byte g, byte b);
 		void (*showPixels)();
+		void (*resetPixels)();
 		Color (*getPixel)(int);
 		void calcDt();
 		
