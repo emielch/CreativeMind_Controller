@@ -12,12 +12,12 @@ Colore::Colore(){
 	dt = 0.05;
 }
 
-void Colore::begin(uint16_t leds, Segment *segments, byte segLen, Beam *beams, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
+void Colore::begin(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)()){
 	totLedAm = leds;
 	segArray = segments;
 	segArray_len = segLen;
 	
-	beamControl.begin(beams, beamAm);
+	beamControl.begin(beamArray,beamAm);
 	neural.begin(&beamControl);
 	
 	setPixel = _setPixel;

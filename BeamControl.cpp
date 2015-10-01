@@ -5,9 +5,17 @@
 BeamControl::BeamControl(){
 }
 
-void BeamControl::begin(Beam *beams, byte beamAm){
-	beamArray = beams;
+void BeamControl::begin(Beam *_beamArray, byte beamAm){
+	beamArray = _beamArray;
 	beamArray_len = beamAm;
+	// uint16_t numBytes = beamAm * sizeof(Beam);
+
+	// if((beamArray = (Beam *)malloc(numBytes))) {
+		// memset(beamArray, 0, numBytes);
+		// beamArray_len = beamAm;
+	// } else {
+		// beamAm = numBytes = 0;
+	// }
 }
 
 
