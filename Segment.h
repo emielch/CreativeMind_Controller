@@ -17,20 +17,24 @@
 #define NEURON 0
 #define SYNAPSE 1
 
+#define COMPLETE 0
+#define STARTEND 1
+
 
 class Segment{
 	public:
-		Segment(int, uint16_t*);
+		Segment(int _segLen, uint16_t *_ledArray);
+		Segment(uint16_t startLed, uint16_t endLed);
 		void setNN(boolean _nnType, int _connAm, Segment **_connSeg);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		void move(float dt);
 		uint16_t getLen(){return segLen;}
-		uint16_t getPixelID(int i){return ledArray[i];}
+		uint16_t getPixelID(uint16_t i);
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
 		void setSines(Color c, float spd);
 		void setFade(Color c, float spd);
-		void setFadeInOut(Color c, float inSpd, float outSpd);
+		void setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd);
 		void setGradient(Color c1, Color c2);
 		Color getCurrentColor();
 		
@@ -39,9 +43,13 @@ class Segment{
 		byte connAm;
 		boolean nnType;  // NEURON or SYNAPSE
 		
+		byte power = 0;
+		
 	private:
+		boolean ledDefMode;
 		uint16_t segLen;  // segment length
 		uint16_t *ledArray;  // LUT for converting segment pixel ID's to strip pixel ID's
+		uint16_t startLed;
 		byte effectID;
 
 		//-- effect parameters --
@@ -53,7 +61,7 @@ class Segment{
 		Color e_color;
 		Color e_fromColor;
 		Color e_toColor;
-		// Color e_outColor;  // adding this makes the teensy crash... :(
+		Color e_outColor;
 		//---
 };
 

@@ -5,16 +5,38 @@
 Segment::Segment(int _segLen, uint16_t *_ledArray){
 	segLen = _segLen;
 	ledArray = _ledArray;
+	ledDefMode = COMPLETE;
+	
 	effectID = 0;  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
 	e_len = 0;
 }
 
+Segment::Segment(uint16_t _startLed, uint16_t _endLed){
+	startLed = _startLed;
+	ledDefMode = STARTEND;
+	
+	segLen = _endLed - _startLed + 1;
+	
+	effectID = 0;  // no effect on segment
+	e_spd = 0;
+	e_pos = 0;
+	e_len = 0;
+}
+
+uint16_t Segment::getPixelID(uint16_t i){
+	if(ledDefMode == STARTEND){
+		return startLed + i;
+	}
+	return ledArray[i];
+}
+
 void Segment::setNN(boolean _nnType, int _connAm, Segment **_connSeg){
 	nnType = _nnType;
 	connAm = _connAm;
 	connSeg = _connSeg;
+	Serial.println(segLen);
 }
 
 void Segment::setRainbow(float spd, float len, byte bri){
@@ -45,9 +67,10 @@ void Segment::setFade(Color c, float spd){
 	e_pos = 0;
 }
 
-void Segment::setFadeInOut(Color c, float inSpd, float outSpd){
+void Segment::setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd){
 	effectID = FADEINOUT;
-	e_toColor = c;
+	e_toColor = cIn;
+	e_outColor = cOut;
 	e_fromColor = e_color;
 	e_spd = inSpd;
 	e_outSpd = outSpd;
@@ -84,8 +107,7 @@ void Segment::move(float dt){
 		case FADEINOUT:{
 			e_pos +=  ((e_pos <= 1) ? e_spd : e_outSpd) * dt;
 			if(e_pos >= 2){
-				Color black(0,0,0,RGB_MODE);
-				setStaticColor(black);
+				setStaticColor(e_outColor);
 			}
 			break;
 		}
@@ -134,8 +156,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			if( e_pos <= 1 ){
 				e_color.fade(e_fromColor, e_toColor, e_pos);
 			}else{
-				Color black(0,0,0,RGB_MODE);
-				e_color.fade(e_toColor, black, e_pos-1);
+				e_color.fade(e_toColor, e_outColor, e_pos-1);
 			}
 			for(int i=0; i<segLen; i++){
 				Color prevCol = getPixel(getPixelID(i));
