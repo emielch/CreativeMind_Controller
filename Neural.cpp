@@ -104,7 +104,7 @@ void Neural::arriveBeam(Beam *beam){
 	// increase the power of the segment it arrived at, accoring to the power of the beam
 	// and discharge the neuron if neccesary
 	if(nextSegment->nnType == NEURON){
-		nextSegment->power += 0.5*beam->power;
+		nextSegment->power += 10;
 		if(nextSegment->power >= 100){
 			neuronDischarge(nextSegment, beam->color.hue());
 		}
@@ -143,7 +143,7 @@ void Neural::neuronDischarge(Segment *neuron, int hue){
 	neuron->power = 0;
 	
 	// get some variables for the new beam
-	int spd = 40;
+	int spd = 100;
 	int power = 100;
 	Color col(hue,100,100,HSB_MODE);
 	
