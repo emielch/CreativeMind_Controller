@@ -36,7 +36,6 @@ void Segment::setNN(boolean _nnType, int _connAm, Segment **_connSeg){
 	nnType = _nnType;
 	connAm = _connAm;
 	connSeg = _connSeg;
-	Serial.println(segLen);
 }
 
 void Segment::setRainbow(float spd, float len, byte bri){

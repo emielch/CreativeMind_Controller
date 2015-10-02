@@ -25,7 +25,7 @@ Colore::Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, b
 }
 
 void Colore::beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse){
-	neural.begin(bDec, nCharge, _DCSpd, _DCPower, _DCSpread, _DCSpdMode, directSynapse, fadeInSpd, fadeOutSpd, &beamControl);
+	neural.begin(bDec, nCharge, _DCSpd, _DCPower, _DCSpread, _DCSpdMode, fadeInSpd, fadeOutSpd, directSynapse, &beamControl);
 	neuralMode = true;
 }
 
@@ -63,7 +63,8 @@ boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, floa
 }
 
 boolean Colore::addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power){
-	return neural.startNeuronBeam(seg, NULL, spd, spdMode, len, col, power, true);
+	if (neuralMode)	return neural.startNeuronBeam(seg, NULL, spd, spdMode, len, col, power, true);
+	return false;
 }
 
 boolean Colore::lightUp(Segment *seg, float spd, Color col){
