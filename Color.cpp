@@ -9,19 +9,11 @@ Color::Color(){
 }
 
 Color::Color(int v1, byte v2, byte v3, byte mode){
-	RGB_updated = false;
-	HSB_updated = false;
-	if(mode == 1){
-		HSB_color.h = v1;
-		HSB_color.s = v2;
-		HSB_color.b = v3;
-		HSB_updated = true;
-	}else{
-		RGB_color.r = v1;
-		RGB_color.g = v2;
-		RGB_color.b = v3;
-		RGB_updated = true;
+	if(mode == HSB_MODE){
+		setHSB(v1, v2, v3);
+		return;
 	}
+	setRGB(v1, v2, v3);
 }
 
 void Color::setRGB(byte r, byte g, byte b){
@@ -33,7 +25,7 @@ void Color::setRGB(byte r, byte g, byte b){
 }
 
 void Color::setHSB(int h, byte s, byte b){
-	HSB_color.h = h;
+	HSB_color.h = (h+360)%360;
 	HSB_color.s = s;
 	HSB_color.b = b;
 	RGB_updated = false;
