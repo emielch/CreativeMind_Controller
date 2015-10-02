@@ -180,8 +180,9 @@ void Neural::arriveBeam(Beam *beam){
 
 void Neural::neuronDischarge(Segment *neuron, int hue){
 	// animate the neuron
+	Color white(255,255,255,RGB_MODE);
 	Color black(0,0,0,RGB_MODE);
-	neuron->setFade(black,10);
+	neuron->setFadeInOut(white,black,8,3);
 	neuron->power = 0;
 	
 	// set the color for the beams
