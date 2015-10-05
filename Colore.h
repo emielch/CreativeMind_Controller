@@ -19,7 +19,7 @@ Created by Emiel Harmsen 14-1-2015.
 
 class Colore{
 	public:
-		Colore(uint16_t leds, Segment *segments, byte segLen, Beam *beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)());
+		Colore(uint16_t leds, Segment *segments, uint16_t segLen, Beam *beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)());
 		void beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse);
 		void update();
 		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
@@ -31,7 +31,7 @@ class Colore{
 	private:
 		uint16_t totLedAm;
 		Segment *segArray;
-		byte segArray_len;
+		uint16_t segArray_len;
 		boolean neuralMode;
 		
 		unsigned long lastCalc; // variable to keep track of the loops per second

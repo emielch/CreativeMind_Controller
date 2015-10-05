@@ -9,12 +9,12 @@
 class BeamControl{
 	public:
 		BeamControl();
-		void begin(Beam *_beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int));
+		void begin(Beam *_beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int));
 		void update(float dt);
 		Beam* freeBeam();
 		
 		Beam *beamArray;
-		byte beamArray_len;
+		uint16_t beamArray_len;
 		
 	private:
 		

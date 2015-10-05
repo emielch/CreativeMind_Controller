@@ -5,7 +5,7 @@
 BeamControl::BeamControl(){
 }
 
-void BeamControl::begin(Beam *_beamArray, byte beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int)){
+void BeamControl::begin(Beam *_beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int)){
 	beamArray = _beamArray;
 	beamArray_len = beamAm;
 	
