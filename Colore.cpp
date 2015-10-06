@@ -10,6 +10,7 @@ Created by Emiel Harmsen 14-1-2015.
 
 Colore::Colore(uint16_t leds, Segment *segments, uint16_t segLen, Beam *beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)()){
 	dt = 0.05;
+	spdFac = 1;
 	totLedAm = leds;
 	segArray = segments;
 	segArray_len = segLen;
@@ -35,11 +36,11 @@ void Colore::update(){
 	resetPixels();
 
 	for(int i=0; i<segArray_len; i++){
-		segArray[i].move(dt);
+		segArray[i].move(dt*spdFac);
 		segArray[i].draw(setPixel,getPixel);
 	}
 	
-	beamControl.update(dt);
+	beamControl.update(dt*spdFac);
 	
 	if(neuralMode)	neural.update();
 
@@ -53,6 +54,14 @@ void Colore::calcDt(){
 
 float Colore::getDt(){
 	return dt;
+}
+
+void Colore::setSpdFac(float _spdFac){
+	spdFac = _spdFac;
+}
+
+uint16_t Colore::getActiveBeamsAm(){
+	return beamControl.activeBeams;
 }
 
 boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col){
