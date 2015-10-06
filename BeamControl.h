@@ -15,6 +15,7 @@ class BeamControl{
 		
 		Beam *beamArray;
 		uint16_t beamArray_len;
+		uint16_t activeBeams;
 		
 	private:
 		
