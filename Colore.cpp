@@ -56,6 +56,10 @@ float Colore::getDt(){
 	return dt;
 }
 
+float Colore::getFPS(){
+	return 1/dt;
+}
+
 void Colore::setSpdFac(float _spdFac){
 	spdFac = _spdFac;
 }

@@ -26,6 +26,7 @@ class Colore{
 		boolean addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power);
 		boolean lightUp(Segment *seg, float spd, Color col);
 		float getDt();
+		float getFPS();
 		uint16_t getActiveBeamsAm();
 		void setSpdFac(float _spdFac);
 		Neural neural;
