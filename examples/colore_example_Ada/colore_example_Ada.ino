@@ -1,21 +1,19 @@
 #include <Colore.h>
-#include <OctoWS2811.h>
+#include <Adafruit_NeoPixel.h>
 
+#define PIN 6
+#define LED_AM 60
 #define BEAM_AM 10
+
 Beam beams[BEAM_AM];
 
-const int ledsPerStrip = 60;
-DMAMEM int displayMemory[ledsPerStrip*6];
-int drawingMemory[ledsPerStrip*6];
-const int config = WS2811_GRB | WS2811_800kHz;
-OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
+Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_AM, PIN, NEO_GRB + NEO_KHZ800);
 
 Segment seg[] = {
    Segment(0,10),  // 0
    Segment(11,60)  // 1
 };
 
-const int LED_AM = ledsPerStrip * 8;
 byte segAm = sizeof(seg)/sizeof(Segment);
 Colore colore( LED_AM, seg, segAm, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib, &reset_ledLib );
 
@@ -44,20 +42,21 @@ void printFramerate(){
 /* ---- Library Interface Functions ---- */
 
 void set_ledLib(int pixel, byte r, byte g, byte b){
-  leds.setPixel(pixel, r, g, b);
+  leds.setPixelColor(pixel, r, g, b);
 }
 
 void show_ledLib(){
   leds.show();
 }
 
-uint32_t bufsize = ledsPerStrip*24;
 void reset_ledLib(){
-  memset(drawingMemory, 0, bufsize);
+  for(int i=0; i<LED_AM; i++){
+    leds.setPixelColor(i,0,0,0);
+  }
 }
 
 Color get_ledLib(int pixel){
-  uint32_t conn = leds.getPixel(pixel);  // retrieve the color that has already been saved
+  uint32_t conn = leds.getPixelColor(pixel);  // retrieve the color that has already been saved
   byte b = conn & 255;       // unpack the color
   byte g = conn >> 8 & 255;
   byte r = conn >> 16 & 255;
