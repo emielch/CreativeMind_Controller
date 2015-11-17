@@ -17,7 +17,7 @@ BUTTON buttons[] = {
 unsigned long nextBeamTime = 0;
 byte buttonAm = sizeof(buttons)/sizeof(BUTTON);
 
-int pushDelay = 150;
+int pushDelay = 30;
 int beamMinDelay = 2000;  /// delay for generating a new beam
 int beamMaxDelay = 10000;
 int buttonWaitTime = 15000;  // the wait time after pressing a button after which a new random beam can be started
@@ -40,7 +40,7 @@ void checkButtons(){
         int hue = random(buttons[i].hue-10,buttons[i].hue+10);
         Color col(hue, 100, 100, HSB_MODE);
         //colore.addNNBeam(buttons[i].startSeg, newBeamSpd, spdMode, beamSpread, col, beamPower);
-        networkSearch.animPath(&seg[random(0,30)]);
+        networkSearch.animPath(buttons[i].startSeg);
         buttons[i].lastPush = millis();
       }
     }else allPressed=false;

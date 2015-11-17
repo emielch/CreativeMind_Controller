@@ -38,8 +38,14 @@ void NetworkSearch::animPath(Segment *startSeg){
 	Color outColor(0,0,0,RGB_MODE);
 	
 	while(currentSegment != NULL){
-		currentSegment->setFadeInOut(effectColor,outColor,4,1);
-		currentSegment = currentSegment->parent;
+		currentSegment->setFadeInOut(effectColor,outColor,100,0.2);
+		int chance = random(0,5);
+		if(chance == 0){
+			int nextId = random(0,currentSegment->connAm);
+			currentSegment = currentSegment->connSeg[nextId];
+		}else{
+			currentSegment = currentSegment->parent;
+		}
 	}
 	
 }
