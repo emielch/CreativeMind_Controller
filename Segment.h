@@ -45,6 +45,11 @@ class Segment{
 		
 		byte power = 0;
 		
+		//-- network search
+		boolean visited = false;
+		Segment *parent;
+		
+		
 	private:
 		boolean ledDefMode;
 		uint16_t segLen;  // segment length
