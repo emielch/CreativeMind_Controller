@@ -86,6 +86,19 @@ void Segment::setGradient(Color c1, Color c2){
 	e_toColor = c2;
 }
 
+void Segment::setWipe(Color c, float spd, boolean dir){
+	effectID = WIPE;
+	e_toColor = c;
+	e_fromColor = e_color;
+	if(dir){
+		e_spd = spd;
+		e_pos = 0;
+	}else{
+		e_spd = -spd;
+		e_pos = 1;
+	}
+}
+
 Color Segment::getCurrentColor(){
 	return e_color;
 }
@@ -111,6 +124,13 @@ void Segment::move(float dt){
 			e_pos +=  ((e_pos <= 1) ? e_spd : e_outSpd) * dt;
 			if(e_pos >= 2){
 				setStaticColor(e_outColor);
+			}
+			break;
+		}
+		case WIPE:{
+			e_pos += e_spd*dt;
+			if(e_pos >= 1 || e_pos <= 0){
+				setStaticColor(e_toColor);
 			}
 			break;
 		}
@@ -177,6 +197,22 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				Color prevCol = getPixel(getPixelID(i));
 				prevCol.add(e_color,1);
 				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+			}
+			break;
+		}
+		
+		case WIPE:{
+			int wipePix = segLen*e_pos;
+			boolean dir = e_spd > 0;
+			for(int i=0; i<segLen; i++){
+			
+				Color wipeCol;
+				if((i<wipePix && dir) || (i>wipePix && !dir)) wipeCol = e_toColor;
+				else wipeCol = e_fromColor;
+				
+				Color prevCol = getPixel(getPixelID(i));
+				wipeCol.add(prevCol,1);
+				setPixel( getPixelID(i), wipeCol.red(), wipeCol.green(), wipeCol.blue() );
 			}
 			break;
 		}

@@ -13,6 +13,7 @@
 #define SINES 4
 #define FADE 5
 #define FADEINOUT 6
+#define WIPE 7
 
 #define NEURON 0
 #define SYNAPSE 1
@@ -36,6 +37,7 @@ class Segment{
 		void setFade(Color c, float spd);
 		void setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd);
 		void setGradient(Color c1, Color c2);
+		void setWipe(Color c, float spd, boolean dir);
 		Color getCurrentColor();
 		
 		//-- NN
