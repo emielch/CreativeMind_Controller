@@ -38,7 +38,8 @@ void NetworkSearch::animPath(Segment *startSeg){
 	Color outColor(0,0,0,RGB_MODE);
 	
 	while(currentSegment != NULL){
-		currentSegment->setFadeInOut(effectColor,outColor,100,0.2);
+		currentSegment->setStaticColor(effectColor);
+		currentSegment->setFade(outColor,1);
 		int chance = random(0,5);
 		if(chance == 0){
 			int nextId = random(0,currentSegment->connAm);
