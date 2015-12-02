@@ -87,15 +87,23 @@ void Segment::setGradient(Color c1, Color c2){
 }
 
 void Segment::setWipe(Color c, float spd, boolean dir){
-	effectID = WIPE;
-	e_toColor = c;
-	e_fromColor = e_color;
-	if(dir){
-		e_spd = spd;
-		e_pos = 0;
+	if(effectID == WIPE){   // if the current effect is already a wipe
+		boolean currDir = e_spd > 0;
+		if(currDir != dir) e_fromColor = e_color;
+		e_color = c;
+		if(dir) e_spd = spd;
+		else e_spd = -spd;
 	}else{
-		e_spd = -spd;
-		e_pos = 1;
+		effectID = WIPE;
+		e_fromColor = e_color;
+		e_color = c;
+		if(dir){
+			e_spd = spd;
+			e_pos = 0;
+		}else{
+			e_spd = -spd;
+			e_pos = 1;
+		}
 	}
 }
 
@@ -130,7 +138,7 @@ void Segment::move(float dt){
 		case WIPE:{
 			e_pos += e_spd*dt;
 			if(e_pos >= 1 || e_pos <= 0){
-				setStaticColor(e_toColor);
+				setStaticColor(e_color);
 			}
 			break;
 		}
@@ -207,7 +215,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			for(int i=0; i<segLen; i++){
 			
 				Color wipeCol;
-				if((i<wipePix && dir) || (i>wipePix && !dir)) wipeCol = e_toColor;
+				if((i<wipePix && dir) || (i>wipePix && !dir)) wipeCol = e_color;
 				else wipeCol = e_fromColor;
 				
 				Color prevCol = getPixel(getPixelID(i));
