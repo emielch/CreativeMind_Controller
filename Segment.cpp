@@ -47,12 +47,12 @@ void Segment::setRainbow(float spd, float len, byte bri){
 }
 
 void Segment::setStaticColor(Color c){
+	e_color = c;
 	if(c.brightness() == 0){
 		effectID = BLACK;
 		return;
 	}
 	effectID = STATIC;
-	e_color = c;
 }
 
 void Segment::setSines(Color c, float spd){
