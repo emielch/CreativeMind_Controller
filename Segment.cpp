@@ -128,7 +128,8 @@ void Segment::move(float dt){
 			break;
 		}
 		case WIPE:{
-			e_pos += e_spd*dt;
+			float spdBoost = (1-e_pos)*e_spd*0.9 + e_spd*0.1;
+			e_pos += spdBoost*dt;
 			if(e_pos >= 1 || e_pos <= 0){
 				setStaticColor(e_toColor);
 			}
