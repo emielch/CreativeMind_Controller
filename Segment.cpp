@@ -86,7 +86,9 @@ void Segment::setGradient(Color c1, Color c2){
 	e_toColor = c2;
 }
 
-void Segment::setWipe(Color c, float spd, boolean dir){
+void Segment::setWipe(Color c, float spd, boolean dir, float accel){
+	e_outSpd = constrain(accel,0,0.99);
+	
 	if(effectID == WIPE){   // if the current effect is already a wipe
 		boolean currDir = e_spd > 0;
 		if(currDir != dir) e_fromColor = e_color;
@@ -136,7 +138,7 @@ void Segment::move(float dt){
 			break;
 		}
 		case WIPE:{
-			float spdBoost = (1-e_pos)*e_spd*0.9 + e_spd*0.1;
+			float spdBoost = (1-e_pos)*e_spd*(e_outSpd) + e_spd*(1-e_outSpd);
 			e_pos += spdBoost*dt;
 			if(e_pos >= 1 || e_pos <= 0){
 				setStaticColor(e_color);
