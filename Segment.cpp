@@ -7,6 +7,7 @@ Segment::Segment(int _segLen, uint16_t *_ledArray){
 	ledArray = _ledArray;
 	ledDefMode = COMPLETE;
 	
+	blendMode = ADD;
 	effectID = 0;  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
@@ -19,10 +20,15 @@ Segment::Segment(uint16_t _startLed, uint16_t _endLed){
 	
 	segLen = _endLed - _startLed + 1;
 	
+	blendMode = ADD;
 	effectID = 0;  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
 	e_len = 0;
+}
+
+void Segment::setBlendMode(int _blendMode){
+	blendMode = _blendMode;
 }
 
 uint16_t Segment::getPixelID(uint16_t i){
@@ -155,14 +161,20 @@ void Segment::move(float dt){
 void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
 	switch (effectID) {
 		
+		case BLACK:{
+			e_color.setRGB(0,0,0);
+			for(int i=0; i<segLen; i++){
+				blendSetPixel(i,e_color,setPixel,getPixel);
+			}
+			break;
+		}
+		
 		case SINES:{
 			for(int i=0; i<segLen; i++){
-				Color prevCol = getPixel(getPixelID(i));
 				float multi = (sin(i*0.5 + e_pos)+1) * (sin(i*0.3 + e_pos*-1.2)+1) /4 * 0.7 + 0.3;
 				Color sineCol(e_color.hue(), e_color.saturation(), e_color.brightness()*multi, HSB_MODE);
 				
-				prevCol.add(sineCol,1);
-				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+				blendSetPixel(i,sineCol,setPixel,getPixel);
 			}
 			break;
 		}
@@ -171,17 +183,14 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			Color rainCol;
 			for(int i=0; i<segLen; i++){
 				rainCol.setHSB( e_pos+i*(10/e_len), 100, e_bri);
-				rainCol.add(getPixel(getPixelID(i)),1);
-				setPixel( getPixelID(i), rainCol.red(), rainCol.green(), rainCol.blue() );
+				blendSetPixel(i,rainCol,setPixel,getPixel);
 			}
 			break;
 		}
 			
 		case STATIC:{
 			for(int i=0; i<segLen; i++){
-				Color prevCol = getPixel(getPixelID(i));
-				prevCol.add(e_color,1);
-				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+				blendSetPixel(i,e_color,setPixel,getPixel);
 			}
 			break;
 		}
@@ -193,9 +202,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				e_color.fade(e_toColor, e_outColor, e_pos-1);
 			}
 			for(int i=0; i<segLen; i++){
-				Color prevCol = getPixel(getPixelID(i));
-				prevCol.add(e_color,1);
-				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+				blendSetPixel(i,e_color,setPixel,getPixel);
 			}
 			break;
 		}
@@ -234,4 +241,16 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 		break;
 	}
 }
+
+void Segment::blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
+	int pixelID = getPixelID(segPixel);
+	Color prevCol = getPixel(pixelID);
+	
+	if(blendMode == ADD) c.add(prevCol,1);
+	else if(blendMode == MULTIPLY) c.multiply(prevCol,1);
+	
+	setPixel( pixelID, c.red(), c.green(), c.blue() );
+}
+
+
 

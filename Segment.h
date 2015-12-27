@@ -21,11 +21,15 @@
 #define COMPLETE 0
 #define STARTEND 1
 
+#define ADD 0
+#define MULTIPLY 1
+
 
 class Segment{
 	public:
 		Segment(int _segLen, uint16_t *_ledArray);
 		Segment(uint16_t startLed, uint16_t endLed);
+		void setBlendMode(int _blendMode);
 		void setNN(boolean _nnType, int _connAm, Segment **_connSeg);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		void move(float dt);
@@ -53,6 +57,9 @@ class Segment{
 		uint16_t *ledArray;  // LUT for converting segment pixel ID's to strip pixel ID's
 		uint16_t startLed;
 		byte effectID;
+		
+		int blendMode;
+		void blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 
 		//-- effect parameters --
 		float e_spd;
