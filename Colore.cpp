@@ -34,13 +34,13 @@ void Colore::update(){
 	calcDt();
 	
 	resetPixels();
+	
+	beamControl.update(dt*spdFac);
 
 	for(int i=0; i<segArray_len; i++){
 		segArray[i].move(dt*spdFac);
 		segArray[i].draw(setPixel,getPixel);
 	}
-	
-	beamControl.update(dt*spdFac);
 	
 	if(neuralMode)	neural.update();
 
