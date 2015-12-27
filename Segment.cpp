@@ -219,21 +219,25 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 		}
 		
 		case WIPE:{
+			boolean dir = e_spd > 0;
 			float endLed = (segLen+e_len) * e_pos;
 			float startLed = endLed - e_len;
 			Color wipeCol;
 			for(int i=startLed; i<=endLed; i++){
 				if(i>=0 && i<segLen){
 					float dist = constrain((i-startLed)/e_len,0,1);
+					if(!dir) dist = 1-dist;
 					wipeCol.fade(e_color,e_fromColor,dist);
 					blendSetPixel(i,wipeCol,setPixel,getPixel);
 				}
 			}
 			for(int i=endLed+1; i<segLen; i++){
-				blendSetPixel(i,e_fromColor,setPixel,getPixel);
+				if(dir) blendSetPixel(i,e_fromColor,setPixel,getPixel);
+				else blendSetPixel(i,e_color,setPixel,getPixel);
 			}
 			for(int i=0; i<startLed-1; i++){
-				blendSetPixel(i,e_color,setPixel,getPixel);
+				if(dir) blendSetPixel(i,e_color,setPixel,getPixel);
+				else blendSetPixel(i,e_fromColor,setPixel,getPixel);
 			}
 			break;
 		}
