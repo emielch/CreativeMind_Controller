@@ -37,6 +37,7 @@ class Color {
 		
 		void add(Color toAdd, float fadeFac);
 		void addHDR(Color toAdd, float fadeFac);
+		void multiply(Color toMult, float fadeFac);
 		void fade(Color toFade, float fadeFac);
 		void fade(Color c1, Color c2, float fadeFac);
 	

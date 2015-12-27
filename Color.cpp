@@ -115,6 +115,20 @@ void Color::addHDR(Color toAdd, float fadeFac){
 	}
 }
 
+void Color::multiply(Color toMult, float fadeFac){
+	if(fadeFac!=0.){
+		byte r = red();
+		byte g = green();
+		byte b = blue();
+		
+		if(toMult.red()!=255) r = r * (toMult.red()+(255-toMult.red())*(1-fadeFac)) / 255;
+		if(toMult.green()!=255) g = g * (toMult.green()+(255-toMult.green())*(1-fadeFac)) / 255;
+		if(toMult.blue()!=255) b = b * (toMult.blue()+(255-toMult.blue())*(1-fadeFac)) / 255;
+		
+		setRGB(r,g,b);
+	}
+}
+
 void Color::fade(Color toFade, float fadeFac){
 	if(fadeFac==1.){
 		setRGB(toFade.red(),toFade.green(),toFade.blue());
