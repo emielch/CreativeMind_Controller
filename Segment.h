@@ -41,7 +41,7 @@ class Segment{
 		void setFade(Color c, float spd);
 		void setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd);
 		void setGradient(Color c1, Color c2);
-		void setWipe(Color c, float spd, boolean dir, float accel);
+		void setWipe(Color c, float spd, boolean dir, float fadeLen, float accel);
 		Color getCurrentColor();
 		
 		//-- NN

@@ -92,8 +92,9 @@ void Segment::setGradient(Color c1, Color c2){
 	e_toColor = c2;
 }
 
-void Segment::setWipe(Color c, float spd, boolean dir, float accel){
+void Segment::setWipe(Color c, float spd, boolean dir, float fadeLen, float accel){
 	e_outSpd = constrain(accel,0,0.99);
+	e_len = fadeLen;
 	
 	if(effectID == WIPE){   // if the current effect is already a wipe
 		boolean currDir = e_spd > 0;
@@ -212,25 +213,27 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				float fade = i*1./(segLen-1);
 				e_color.fade(e_fromColor, e_toColor, fade);
 				
-				Color prevCol = getPixel(getPixelID(i));
-				prevCol.add(e_color,1);
-				setPixel( getPixelID(i), prevCol.red(), prevCol.green(), prevCol.blue() );
+				blendSetPixel(i,e_color,setPixel,getPixel);
 			}
 			break;
 		}
 		
 		case WIPE:{
-			int wipePix = segLen*e_pos;
-			boolean dir = e_spd > 0;
-			for(int i=0; i<segLen; i++){
-			
-				Color wipeCol;
-				if((i<wipePix && dir) || (i>wipePix && !dir)) wipeCol = e_color;
-				else wipeCol = e_fromColor;
-				
-				Color prevCol = getPixel(getPixelID(i));
-				wipeCol.add(prevCol,1);
-				setPixel( getPixelID(i), wipeCol.red(), wipeCol.green(), wipeCol.blue() );
+			float endLed = (segLen+e_len) * e_pos;
+			float startLed = endLed - e_len;
+			Color wipeCol;
+			for(int i=startLed; i<=endLed; i++){
+				if(i>=0 && i<segLen){
+					float dist = constrain((i-startLed)/e_len,0,1);
+					wipeCol.fade(e_color,e_fromColor,dist);
+					blendSetPixel(i,wipeCol,setPixel,getPixel);
+				}
+			}
+			for(int i=endLed+1; i<segLen; i++){
+				blendSetPixel(i,e_fromColor,setPixel,getPixel);
+			}
+			for(int i=0; i<startLed-1; i++){
+				blendSetPixel(i,e_color,setPixel,getPixel);
 			}
 			break;
 		}
