@@ -47,7 +47,7 @@ void Segment::setNN(boolean _nnType, int _connAm, Segment **_connSeg){
 void Segment::setRainbow(float spd, float len, byte bri){
 	if(effectID != RAINBOW) e_pos = 0;
 	effectID = RAINBOW;
-	e_spd = spd;
+	e_spd = spd*360;
 	e_len = len;
 	e_bri = bri;
 }
