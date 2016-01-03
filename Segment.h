@@ -14,6 +14,7 @@
 #define FADE 5
 #define FADEINOUT 6
 #define WIPE 7
+#define WHITE 8
 
 #define NEURON 0
 #define SYNAPSE 1
@@ -37,6 +38,8 @@ class Segment{
 		uint16_t getPixelID(uint16_t i);
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
+		void setStaticBlack();
+		void setStaticWhite();
 		void setSines(Color c, float spd);
 		void setFade(Color c, float spd);
 		void setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd);

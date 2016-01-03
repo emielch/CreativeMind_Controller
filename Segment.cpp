@@ -8,7 +8,7 @@ Segment::Segment(int _segLen, uint16_t *_ledArray){
 	ledDefMode = COMPLETE;
 	
 	blendMode = ADD;
-	effectID = 0;  // no effect on segment
+	setStaticBlack();  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
 	e_len = 0;
@@ -21,7 +21,7 @@ Segment::Segment(uint16_t _startLed, uint16_t _endLed){
 	segLen = _endLed - _startLed + 1;
 	
 	blendMode = ADD;
-	effectID = 0;  // no effect on segment
+	effectID = BLACK;  // no effect on segment
 	e_spd = 0;
 	e_pos = 0;
 	e_len = 0;
@@ -55,10 +55,23 @@ void Segment::setRainbow(float spd, float len, byte bri){
 void Segment::setStaticColor(Color c){
 	e_color = c;
 	if(c.brightness() == 0){
-		effectID = BLACK;
+		setStaticBlack();
+		return;
+	}else if(c.red() == 255 && c.green() == 255 && c.blue() == 255){
+		setStaticWhite();
 		return;
 	}
 	effectID = STATIC;
+}
+
+void Segment::setStaticBlack(){
+	effectID = BLACK;
+	e_color.setRGB(0,0,0);
+}
+
+void Segment::setStaticWhite(){
+	effectID = WHITE;
+	e_color.setRGB(255,255,255);
 }
 
 void Segment::setSines(Color c, float spd){
@@ -169,9 +182,19 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 	switch (effectID) {
 		
 		case BLACK:{
-			e_color.setRGB(0,0,0);
-			for(int i=0; i<segLen; i++){
-				blendSetPixel(i,e_color,setPixel,getPixel);
+			if(blendMode!=ADD){
+				for(int i=0; i<segLen; i++){
+					blendSetPixel(i,e_color,setPixel,getPixel);
+				}
+			}
+			break;
+		}
+		
+		case WHITE:{
+			if(blendMode!=MULTIPLY){
+				for(int i=0; i<segLen; i++){
+					blendSetPixel(i,e_color,setPixel,getPixel);
+				}
 			}
 			break;
 		}
