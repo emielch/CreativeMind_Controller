@@ -22,7 +22,7 @@ class Colore{
 		Colore(uint16_t leds, Segment *segments, uint16_t segLen, Beam *beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int), void (*_showPixels)(), void (*_resetPixels)());
 		void beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse);
 		void update();
-		boolean addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col);
+		
 		boolean addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power);
 		boolean lightUp(Segment *seg, float spd, Color col);
 		float getDt();

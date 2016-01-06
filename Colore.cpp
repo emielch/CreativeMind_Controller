@@ -22,7 +22,7 @@ Colore::Colore(uint16_t leds, Segment *segments, uint16_t segLen, Beam *beamArra
 	
 	neuralMode = false;
 	
-	beamControl.begin(beamArray,beamAm,setPixel,getPixel);
+	beamControl.begin(beamArray,beamAm);
 	for(int i=0; i<segArray_len; i++){
 		segArray[i].setBeamControl( &beamControl );
 	}
@@ -37,8 +37,6 @@ void Colore::update(){
 	calcDt();
 	
 	resetPixels();
-	
-	beamControl.update(dt*spdFac);
 
 	for(int i=0; i<segArray_len; i++){
 		segArray[i].move(dt*spdFac);
@@ -71,12 +69,6 @@ uint16_t Colore::getActiveBeamsAm(){
 	return beamControl.activeBeams;
 }
 
-boolean Colore::addBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col){
-	Beam* newBeam = beamControl.freeBeam();
-	if(newBeam == NULL) return false;
-	newBeam->begin(seg, dir, spd, spdMode, len, col, PULSE);
-	return true;
-}
 
 boolean Colore::addNNBeam(Segment *seg, float spd, byte spdMode, float len, Color col, int power){
 	if (neuralMode)	return neural.startNeuronBeam(seg, NULL, spd, spdMode, len, col, power, true);

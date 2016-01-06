@@ -204,6 +204,6 @@ void Neural::neuronDischarge(Segment *neuron, int hue){
 boolean Neural::addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power){
 	Beam* newBeam = beamControl->freeBeam();
 	if(newBeam == NULL) return false;
-	newBeam->begin(seg, dir, spd, spdMode, len, col, NEURAL, power);
+	seg->setNNBeam(dir, spd, spdMode, len, col, power);
 	return true;
 }

@@ -52,7 +52,9 @@ class Segment{
 		Color getCurrentColor();
 		
 		void setBeamControl(BeamControl *_beamControl);
-		boolean addBeam(boolean dir, float spd, byte spdMode, float len, Color col);
+		boolean setBeam(boolean dir, float spd, byte spdMode, float len, Color col);
+		boolean setNNBeam(boolean dir, float spd, byte spdMode, float len, Color col, int power);
+		
 		
 		//-- NN
 		Segment **connSeg;  // neurons are connected to multiple synapses, synapses to two neurons
@@ -70,6 +72,8 @@ class Segment{
 		
 		int blendMode;
 		void blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
+		
+		void addBeam(Beam* beam);
 
 		//-- effect parameters --
 		float e_spd;

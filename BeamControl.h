@@ -10,8 +10,7 @@ class Beam; // forward declaration
 class BeamControl{
 	public:
 		BeamControl();
-		void begin(Beam *_beamArray, uint16_t beamAm, void (*_setPixel)(int pixel, byte, byte, byte), Color (*_getPixel)(int));
-		void update(float dt);
+		void begin(Beam *_beamArray, uint16_t beamAm);
 		Beam* freeBeam();
 		
 		Beam *beamArray;
@@ -20,8 +19,6 @@ class BeamControl{
 		
 	private:
 		
-		void (*setPixel)(int pixel, byte r, byte g, byte b);
-		Color (*getPixel)(int);
 };
 
 #endif

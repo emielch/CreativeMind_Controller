@@ -22,8 +22,8 @@ void bootAnimation(){
     if(millis()>startTime+bootAnimDuration-100){
       Color white(255,255,255,RGB_MODE);
       for(int i=30; i<75; i++){
-        colore.addBeam(&seg[i],true,2,SEGMENT_SPD,8,white);
-        colore.addBeam(&seg[i],false,2,SEGMENT_SPD,8,white);
+        seg[i].setBeam(true,2,SEGMENT_SPD,8,white);
+        seg[i].setBeam(false,2,SEGMENT_SPD,8,white);
       }
       runAnim = false;
     }

@@ -138,29 +138,39 @@ void Segment::setBeamControl(BeamControl *_beamControl){
 	beamControl = _beamControl;
 }
 
-boolean Segment::addBeam(boolean dir, float spd, byte spdMode, float len, Color col){
+boolean Segment::setBeam(boolean dir, float spd, byte spdMode, float len, Color col){
 	Beam* newBeam = beamControl->freeBeam();
 	if(newBeam == NULL) return false;
 	newBeam->begin(this, dir, spd, spdMode, len, col, PULSE);
-	
-	// add the new beam to the end of the linked list
+	addBeam(newBeam);
+	return true;
+}
+
+boolean Segment::setNNBeam(boolean dir, float spd, byte spdMode, float len, Color col, int power){
+	Beam* newBeam = beamControl->freeBeam();
+	if(newBeam == NULL) return false;
+	newBeam->begin(this, dir, spd, spdMode, len, col, NEURAL, power);
+	addBeam(newBeam);
+	return true;
+}
+
+void Segment::addBeam(Beam* beam){  // add the beam to the end of the linked list
 	if(beamAnchor == NULL){
-		beamAnchor = newBeam;
+		beamAnchor = beam;
 	}else{
 		Beam* beamWalker = beamAnchor;
 		while( beamWalker->nextBeam != NULL ){
 			beamWalker = beamWalker->nextBeam;
 		}
-		beamWalker->nextBeam = newBeam;
+		beamWalker->nextBeam = beam;
 	}
-	return true;
 }
 
 void Segment::updateBeams(float dt){
 	Beam* beamWalker = beamAnchor;
 	Beam* beamWalker_previous = NULL;
 	while( beamWalker != NULL ){
-		if( !beamWalker->move(dt) ){  // move the beam and if the beam finished, remove it from the list
+		if( !beamWalker->move(dt) ){  // move the beam. if the beam finished, remove it from the list
 			if(beamWalker_previous == NULL) beamAnchor = NULL;
 			else{
 				beamWalker_previous->nextBeam = beamWalker->nextBeam;
@@ -226,6 +236,8 @@ void Segment::move(float dt){
 }
 
 void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
+	drawBeams(setPixel,getPixel);
+	
 	switch (effectID) {
 		
 		case BLACK:{
