@@ -23,6 +23,9 @@ Colore::Colore(uint16_t leds, Segment *segments, uint16_t segLen, Beam *beamArra
 	neuralMode = false;
 	
 	beamControl.begin(beamArray,beamAm,setPixel,getPixel);
+	for(int i=0; i<segArray_len; i++){
+		segArray[i].setBeamControl( &beamControl );
+	}
 }
 
 void Colore::beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float fadeInSpd, float fadeOutSpd, boolean directSynapse){

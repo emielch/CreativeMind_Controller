@@ -5,6 +5,8 @@
 
 #include "Arduino.h"
 #include "Color.h"
+#include "Beam.h"
+#include "BeamControl.h"
 
 #define BLACK 0
 #define STATIC 1
@@ -25,6 +27,8 @@
 #define ADD 0
 #define MULTIPLY 1
 
+class BeamControl; // forward declaration
+class Beam;
 
 class Segment{
 	public:
@@ -46,6 +50,9 @@ class Segment{
 		void setGradient(Color c1, Color c2);
 		void setWipe(Color c, float spd, boolean dir, float fadeLen, float accel);
 		Color getCurrentColor();
+		
+		void setBeamControl(BeamControl *_beamControl);
+		boolean addBeam(boolean dir, float spd, byte spdMode, float len, Color col);
 		
 		//-- NN
 		Segment **connSeg;  // neurons are connected to multiple synapses, synapses to two neurons
@@ -75,6 +82,12 @@ class Segment{
 		Color e_toColor;
 		Color e_outColor;
 		//---
+		
+		BeamControl *beamControl;
+		Beam *beamAnchor; // linked list anchor
+		
+		void updateBeams(float dt);
+		void drawBeams(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 };
 
 #endif

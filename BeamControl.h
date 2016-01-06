@@ -5,6 +5,7 @@
 #include "Arduino.h"
 #include "Beam.h"
 
+class Beam; // forward declaration
 
 class BeamControl{
 	public:

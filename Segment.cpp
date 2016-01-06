@@ -134,7 +134,54 @@ Color Segment::getCurrentColor(){
 	return e_color;
 }
 
+void Segment::setBeamControl(BeamControl *_beamControl){
+	beamControl = _beamControl;
+}
+
+boolean Segment::addBeam(boolean dir, float spd, byte spdMode, float len, Color col){
+	Beam* newBeam = beamControl->freeBeam();
+	if(newBeam == NULL) return false;
+	newBeam->begin(this, dir, spd, spdMode, len, col, PULSE);
+	
+	// add the new beam to the end of the linked list
+	if(beamAnchor == NULL){
+		beamAnchor = newBeam;
+	}else{
+		Beam* beamWalker = beamAnchor;
+		while( beamWalker->nextBeam != NULL ){
+			beamWalker = beamWalker->nextBeam;
+		}
+		beamWalker->nextBeam = newBeam;
+	}
+	return true;
+}
+
+void Segment::updateBeams(float dt){
+	Beam* beamWalker = beamAnchor;
+	Beam* beamWalker_previous = NULL;
+	while( beamWalker != NULL ){
+		if( !beamWalker->move(dt) ){  // move the beam and if the beam finished, remove it from the list
+			if(beamWalker_previous == NULL) beamAnchor = NULL;
+			else{
+				beamWalker_previous->nextBeam = beamWalker->nextBeam;
+			}
+		}
+		beamWalker_previous = beamWalker;
+		beamWalker = beamWalker->nextBeam;
+	}
+}
+
+void Segment::drawBeams(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
+	Beam* beamWalker = beamAnchor;
+	while( beamWalker != NULL ){
+		beamWalker->draw(setPixel,getPixel);
+		beamWalker = beamWalker->nextBeam;
+	}
+}
+
 void Segment::move(float dt){
+	updateBeams(dt);
+	
 	switch (effectID) {
 		case SINES:{
 			e_pos += e_spd*dt;

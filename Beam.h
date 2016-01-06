@@ -16,13 +16,14 @@
 #define UP 0
 #define DOWN 1
 
+class Segment;  // forward declaration
 
 class Beam{
 	public:
 		Beam();
 		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode);
 		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power);
-		void move(float dt);
+		boolean move(float dt);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		boolean isActive();
 		boolean justArrived();
@@ -36,6 +37,9 @@ class Beam{
 		float spread;
 		Color color;
 		byte spdMode;
+		
+		//-- linked list pointer
+		Beam *nextBeam;
 		
 		//-- NN
 		int power;

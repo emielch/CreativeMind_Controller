@@ -29,6 +29,9 @@ void Beam::begin(Segment *seg, boolean _dir, float spd, byte _spdMode, float len
 	endFac = 1 + spreadFac;
 	
 	posFactor = ((dir == UP) ? startFac : endFac);
+	
+	// linked list pointer
+	nextBeam = NULL;
 }
 
 void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power){
@@ -36,11 +39,13 @@ void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, 
 	begin(seg, dir, spd, spdMode, len, col, _mode);
 }
 
-void Beam::move(float dt){
+boolean Beam::move(float dt){
 	posFactor += segSpd*dt * ((dir == UP) ? 1 : -1);
 	if( posFactor>endFac || posFactor<startFac ){
 		active = false;
+		return false;
 	}
+	return true;
 }
 
 boolean Beam::justArrived(){
