@@ -17,6 +17,7 @@
 #define FADEINOUT 6
 #define WIPE 7
 #define WHITE 8
+#define FIRE 9
 
 #define NEURON 0
 #define SYNAPSE 1
@@ -50,6 +51,8 @@ class Segment{
 		void setFadeInOut(Color cIn, Color cOut, float inSpd, float outSpd);
 		void setGradient(Color c1, Color c2);
 		void setWipe(Color c, float spd, boolean dir, float fadeLen, float accel);
+		void setFire();
+		
 		Color getCurrentColor();
 		
 		void setBeamControl(BeamControl *_beamControl);

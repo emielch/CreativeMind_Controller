@@ -130,6 +130,10 @@ void Segment::setWipe(Color c, float spd, boolean dir, float fadeLen, float acce
 	}
 }
 
+void Segment::setFire(){
+	effectID = FIRE;
+}
+
 Color Segment::getCurrentColor(){
 	return e_color;
 }
@@ -326,6 +330,63 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				if(dir) blendSetPixel(i,e_color,setPixel,getPixel);
 				else blendSetPixel(i,e_fromColor,setPixel,getPixel);
 			}
+			break;
+		}
+		
+		case FIRE:{
+			int Cooling = 20;
+			unsigned int Sparking = 80;
+			// Step 1.  Cool down every cell a little
+			int cooldown;
+			for(int i=0; i<segLen; i++){
+				int pixelID = getPixelID(i);
+				Color c = getPixel(pixelID);
+				
+				cooldown = random(0, ((Cooling * 10) / segLen) + 2);
+				
+				if(cooldown>c.brightness()) {
+					c.setHSB(0, 0, 0);
+				} else {
+					c.setHSB(0, 0, c.brightness()-cooldown);
+				}
+				setPixel( pixelID, c.red(), c.green(), c.blue() );
+			}
+			
+			// Step 2.  Heat from each cell drifts 'up' and diffuses a little
+			for( int k= segLen - 1; k >= 2; k--) {
+				int pixelID = getPixelID(k);
+				Color c = getPixel(pixelID);
+				
+				getPixel(getPixelID(k-1)).brightness();
+				
+				int heat = (getPixel(getPixelID(k-1)).brightness() + getPixel(getPixelID(k-2)).brightness()*2) / 3;
+				c.setHSB(0, 0, heat);
+				
+				setPixel( pixelID, c.red(), c.green(), c.blue() );
+			}
+			
+			// Step 3.  Randomly ignite new 'sparks' near the bottom
+			if( random(255) < Sparking ) {
+				int y = random(7);
+				int pixelID = getPixelID(y);
+				Color c = getPixel(pixelID);
+				
+				c.setHSB(0, 0, c.brightness()+random(60,100));
+				
+				setPixel( pixelID, c.red(), c.green(), c.blue() );
+			}
+			
+			for(int i=0; i<segLen; i++){
+				int pixelID = getPixelID(i);
+				Color c = getPixel(pixelID);
+				
+				int temp = c.brightness();
+				int hue = constrain(map(temp,0,100,-15,30),0,60);
+				c.setHSB(hue, 100, temp);
+				
+				setPixel( pixelID, c.red(), c.green(), c.blue() );
+			}
+				
 			break;
 		}
 			
