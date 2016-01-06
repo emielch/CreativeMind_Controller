@@ -28,7 +28,7 @@ void bootAnimation(){
       runAnim = false;
     }
 
-    colore.update();
+    colore.update(true);
     printFramerate();
     blinkLED();
   }

@@ -30,7 +30,7 @@ void setup() {
 
 void loop() {
   checkSerial();
-  colore.update();
+  colore.update(true);
   printFramerate();
   blinkLED();
   checkButtons();
