@@ -236,7 +236,6 @@ void Segment::move(float dt){
 }
 
 void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
-	drawBeams(setPixel,getPixel);
 	
 	switch (effectID) {
 		
@@ -335,14 +334,19 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 					
 		break;
 	}
+	
+	drawBeams(setPixel,getPixel);
 }
 
 void Segment::blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
 	int pixelID = getPixelID(segPixel);
-	Color prevCol = getPixel(pixelID);
 	
-	if(blendMode == ADD) c.add(prevCol,1);
-	else if(blendMode == MULTIPLY) c.multiply(prevCol,1);
+	if(blendMode != NORMAL){
+		Color prevCol = getPixel(pixelID);
+		
+		if(blendMode == ADD) c.add(prevCol,1);
+		else if(blendMode == MULTIPLY) c.multiply(prevCol,1);
+	}
 	
 	setPixel( pixelID, c.red(), c.green(), c.blue() );
 }

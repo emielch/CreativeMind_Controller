@@ -25,7 +25,8 @@
 #define STARTEND 1
 
 #define ADD 0
-#define MULTIPLY 1
+#define NORMAL 1
+#define MULTIPLY 2
 
 class BeamControl; // forward declaration
 class Beam;
