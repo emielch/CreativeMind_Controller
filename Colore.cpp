@@ -33,10 +33,10 @@ void Colore::beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _D
 	neuralMode = true;
 }
 
-void Colore::update(){
+void Colore::update(boolean clearPixels){
 	calcDt();
 	
-	resetPixels();
+	if(clearPixels) resetPixels();
 
 	for(int i=0; i<segArray_len; i++){
 		segArray[i].move(dt*spdFac);
