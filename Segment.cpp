@@ -171,16 +171,16 @@ void Segment::addBeam(Beam* beam){  // add the beam to the end of the linked lis
 }
 
 void Segment::updateBeams(float dt){
-	Beam* beamWalker = beamAnchor;
-	Beam* beamWalker_previous = NULL;
-	while( beamWalker != NULL ){
-		if( !beamWalker->move(dt) ){  // move the beam. if the beam finished, remove it from the list
-			if(beamWalker_previous == NULL) beamAnchor = beamWalker->nextBeam;
+	Beam* beamWalker = beamAnchor;  // initing the walker
+	Beam* beamWalker_previous = NULL; // there is no previous beam yet..
+	while( beamWalker != NULL ){ // loop thought the list of beams and move them.
+		if( !beamWalker->move(dt) ){   //if the beam is finished, remove it from the list
+			if(beamWalker_previous == NULL) beamAnchor = beamWalker->nextBeam;  // set the previous' beam next beam to the current's beam next beam, if the current is the first use the anchor
 			else beamWalker_previous->nextBeam = beamWalker->nextBeam;
-		}else{
-			beamWalker_previous = beamWalker;
+		}else{									// the previous beam remains the same when the current is removed therefore only change the preious' next beam
+			beamWalker_previous = beamWalker;  // otherwise the previous beam becomes the current one
 		}
-		beamWalker = beamWalker->nextBeam;
+		beamWalker = beamWalker->nextBeam;  // go to the next beam
 	}
 }
 
