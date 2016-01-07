@@ -175,12 +175,11 @@ void Segment::updateBeams(float dt){
 	Beam* beamWalker_previous = NULL;
 	while( beamWalker != NULL ){
 		if( !beamWalker->move(dt) ){  // move the beam. if the beam finished, remove it from the list
-			if(beamWalker_previous == NULL) beamAnchor = NULL;
-			else{
-				beamWalker_previous->nextBeam = beamWalker->nextBeam;
-			}
+			if(beamWalker_previous == NULL) beamAnchor = beamWalker->nextBeam;
+			else beamWalker_previous->nextBeam = beamWalker->nextBeam;
 		}
-		beamWalker_previous = beamWalker;
+		if(beamAnchor == NULL) beamWalker_previous = NULL;
+		else beamWalker_previous = beamWalker;
 		beamWalker = beamWalker->nextBeam;
 	}
 }
