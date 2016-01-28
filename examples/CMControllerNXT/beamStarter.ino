@@ -3,7 +3,9 @@ struct BUTTON{
   byte pin;
   Segment *startSeg;
   int hue;
-  unsigned int lastPush;
+  unsigned int pushStart;
+  unsigned int lastTrigger;
+  boolean pressed;
 };
 
 
@@ -18,6 +20,7 @@ unsigned long nextBeamTime = 0;
 byte buttonAm = sizeof(buttons)/sizeof(BUTTON);
 
 int pushDelay = 150;
+int lightningDelay = 2000;
 int beamMinDelay = 2000;  /// delay for generating a new beam
 int beamMaxDelay = 10000;
 int buttonWaitTime = 15000;  // the wait time after pressing a button after which a new random beam can be started
@@ -26,7 +29,9 @@ void beginButtons(){
   for(int i=0; i<buttonAm; i++){
     byte buttonPin = buttons[i].pin;
     pinMode(buttonPin, INPUT_PULLUP);
-    buttons[i].lastPush = 0;
+    buttons[i].lastTrigger = 0;
+    buttons[i].pushStart = 0;
+    buttons[i].pressed = false;
   }
 }
 
@@ -36,14 +41,27 @@ void checkButtons(){
   for(int i=0; i<buttonAm; i++){
     byte buttonPin = buttons[i].pin;
     if( !digitalRead(buttonPin) ){
-      if( millis() > buttons[i].lastPush + pushDelay ){
+      if( millis() > buttons[i].lastTrigger + pushDelay ){
         int hue = random(buttons[i].hue-10,buttons[i].hue+10);
         Color col(hue, 100, 100, HSB_MODE);
         colore.addNNBeam(buttons[i].startSeg, newBeamSpd, spdMode, beamSpread, col, beamPower);
-        //networkSearch.animPath(buttons[i].startSeg);
-        buttons[i].lastPush = millis();
+        buttons[i].lastTrigger = millis();
+        
+        if( buttons[i].pressed ){
+          if(millis() > buttons[i].pushStart + lightningDelay){
+            networkSearch.animPath(buttons[i].startSeg);
+          }
+        }else{
+          buttons[i].pressed = true;
+          buttons[i].pushStart = millis();
+        }
       }
-    }else allPressed=false;
+    }else{
+      allPressed=false;
+      if( buttons[i].pressed ){
+        buttons[i].pressed = false;
+      }
+    }
   }
   
   if(allPressed) bootAnimation();
@@ -52,7 +70,7 @@ void checkButtons(){
 void newRandomBeam(){
   boolean buttonsTimeOut = true;
   for(int i=0; i<buttonAm; i++){
-    if( millis() < buttons[i].lastPush + buttonWaitTime){
+    if( millis() < buttons[i].lastTrigger + buttonWaitTime){
       buttonsTimeOut = false;
       break;
     }
