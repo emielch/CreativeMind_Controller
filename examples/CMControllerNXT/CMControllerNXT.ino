@@ -1,3 +1,4 @@
+#include <QueueList.h>
 #include <Colore.h>
 #include "config.h"
 #include "netLayout.h"
@@ -11,6 +12,17 @@ Beam beams[BEAM_AM];
 byte segAm = sizeof(seg)/sizeof(Segment);
 Colore colore( LED_AM, seg, segAm, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib, &reset_ledLib );
 
+NetworkSearch networkSearch;
+Segment *coreSegments[] = {
+  &seg[0],
+  &seg[1],
+  &seg[2],
+  &seg[3],
+  &seg[4],
+  &seg[5]
+};
+byte coreSegAm = sizeof(coreSegments)/4;
+
 void setup() {
   Serial.begin(9600);
   delay(500);
@@ -18,6 +30,7 @@ void setup() {
   pinMode(statusLedPin, OUTPUT);
   setNN();
   colore.beginNN(beamDecay, neuronChargeFac, DCSpd, DCPower, DCSpread, DCSpdMode, fadeInSpd, fadeOutSpd, allowDirectSynapse);
+  networkSearch.BFS(coreSegments,coreSegAm);
   leds.begin();
   
   printFreeRam();

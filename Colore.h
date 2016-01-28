@@ -12,6 +12,7 @@ Created by Emiel Harmsen 14-1-2015.
 #include "Beam.h"
 #include "BeamControl.h"
 #include "Neural.h"
+#include "NetworkSearch.h"
 
 
 

@@ -40,6 +40,7 @@ void checkButtons(){
         int hue = random(buttons[i].hue-10,buttons[i].hue+10);
         Color col(hue, 100, 100, HSB_MODE);
         colore.addNNBeam(buttons[i].startSeg, newBeamSpd, spdMode, beamSpread, col, beamPower);
+        //networkSearch.animPath(buttons[i].startSeg);
         buttons[i].lastPush = millis();
       }
     }else allPressed=false;
