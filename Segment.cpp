@@ -138,6 +138,10 @@ Color Segment::getCurrentColor(){
 	return e_color;
 }
 
+Color Segment::getOutColor(){
+	return e_outColor;
+}
+
 void Segment::setBeamControl(BeamControl *_beamControl){
 	beamControl = _beamControl;
 }

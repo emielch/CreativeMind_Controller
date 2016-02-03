@@ -32,10 +32,9 @@ void NetworkSearch::BFS(Segment **coreSegments, uint16_t coreSegAm){
 	}
 }
 
-void NetworkSearch::animPath(Segment *startSeg){
+void NetworkSearch::animPath(Segment *startSeg, Color effectColor){
 	Segment *currentSegment = startSeg;
-	Color effectColor(0,0,100,HSB_MODE);
-	Color outColor = currentSegment->getCurrentColor();
+	Color outColor(0,0,0,RGB_MODE);
 	
 	while(currentSegment != NULL){
 		currentSegment->setStaticColor(effectColor);
