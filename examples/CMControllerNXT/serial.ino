@@ -7,3 +7,9 @@ void checkSerial(){
   
 }
 
+
+void sendNeuronFire(byte neuronID){
+  Serial.print("Neruron Fired: ");
+  Serial.println(neuronID);
+}
+

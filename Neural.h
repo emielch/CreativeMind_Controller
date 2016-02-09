@@ -13,10 +13,11 @@ class Neural{
 	public:
 		Neural();
 		void begin(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCSpread, boolean _DCSpdMode, float inSpd, float outSpd, boolean directSynapse, BeamControl *_beamControl);
+		void setSendFunction(void (*_sendNeuronFire)(byte));
 		void update();
 		boolean startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power, boolean animNeur);
 		boolean startSynapseBeam(Segment *neuron, boolean dir, float _spd, byte _spdMode, float _len, Color _col, int _power );
-	
+		
 	private:
 		void arriveBeam(Beam *beam);
 		void neuronDischarge(Segment *neuron, int hue);
@@ -32,6 +33,8 @@ class Neural{
 		float fadeInSpd;
 		float fadeOutSpd;
 		boolean allowDirectSynapse;
+		
+		void (*sendNeuronFire)(byte);
 };
 
 

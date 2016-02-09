@@ -27,6 +27,10 @@ void Neural::begin(int bDec, float nCharge, int _DCSpd, int _DCPower, float _DCS
 	beamControl = _beamControl;
 }
 
+void Neural::setSendFunction(void (*_sendNeuronFire)(byte)){
+	sendNeuronFire = _sendNeuronFire;
+}
+
 void Neural::update(){
 	for(int i=0; i<beamControl->beamArray_len; i++){
 		if( beamControl->beamArray[i].isActive() ){
@@ -41,6 +45,10 @@ void Neural::update(){
 
 
 boolean Neural::startNeuronBeam(Segment *neuron, Segment *skipSeg, float _spd, byte _spdMode, float _len, Color _col, int _power, boolean animNeur){
+	
+	if(sendNeuronFire != NULL){
+		sendNeuronFire(0);
+	}
 	
 	// stop if the segment not a NEURON
 	if( neuron->nnType!=NEURON){
