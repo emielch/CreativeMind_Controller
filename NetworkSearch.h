@@ -14,7 +14,7 @@ class NetworkSearch{
 	public:
 		NetworkSearch();
 		void BFS(Segment **coreSegments, uint16_t coreSegAm);
-		void animPath(Segment *startSeg);
+		void animPath(Segment *startSeg, Color effectColor);
 	private:
 		
 };

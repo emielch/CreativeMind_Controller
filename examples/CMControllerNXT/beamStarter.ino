@@ -49,7 +49,10 @@ void checkButtons(){
         
         if( buttons[i].pressed ){
           if(millis() > buttons[i].pushStart + lightningDelay){
-            networkSearch.animPath(buttons[i].startSeg);
+            int bri = constrain( (millis() - buttons[i].pushStart + lightningDelay)/100, 0, 100);
+            Serial.println(bri);
+            col.setHSB(col.hue(),100-bri*0.8,bri);
+            networkSearch.animPath(buttons[i].startSeg, col);
           }
         }else{
           buttons[i].pressed = true;

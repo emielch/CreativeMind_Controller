@@ -54,6 +54,7 @@ class Segment{
 		void setFire();
 		
 		Color getCurrentColor();
+		Color getOutColor();
 		
 		void setBeamControl(BeamControl *_beamControl);
 		boolean setBeam(boolean dir, float spd, byte spdMode, float len, Color col);
