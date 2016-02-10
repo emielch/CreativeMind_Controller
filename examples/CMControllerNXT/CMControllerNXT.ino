@@ -30,7 +30,8 @@ void setup() {
   pinMode(statusLedPin, OUTPUT);
   setNN();
   colore.beginNN(beamDecay, neuronChargeFac, DCSpd, DCPower, DCSpread, DCSpdMode, fadeInSpd, fadeOutSpd, allowDirectSynapse);
-  colore.neural.setSendFunction(&sendNeuronFire);
+  colore.neural.setSendFireFunction(&sendNeuronFire);
+  colore.neural.setSendDischargeFunction(&sendNeuronDischarge);
   networkSearch.BFS(coreSegments,coreSegAm);
   leds.begin();
   
