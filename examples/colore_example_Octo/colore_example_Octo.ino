@@ -4,15 +4,14 @@
 #define BEAM_AM 10
 Beam beams[BEAM_AM];
 
-const int ledsPerStrip = 60;
+const int ledsPerStrip = 144;
 DMAMEM int displayMemory[ledsPerStrip*6];
 int drawingMemory[ledsPerStrip*6];
 const int config = WS2811_GRB | WS2811_800kHz;
 OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
 Segment seg[] = {
-   Segment(0,10),  // 0
-   Segment(11,60)  // 1
+   Segment(0,144),  // 0
 };
 
 const int LED_AM = ledsPerStrip * 8;
@@ -25,12 +24,11 @@ void setup(){
   leds.begin();
   
   // let the LEDs do something...
-  seg[0].setRainbow(20,10,100);
-  seg[1].setRainbow(1,1,20);
+  seg[0].setRainbow(0.5,1,40);
 }
 
 void loop(){
-  colore.update();
+  colore.update(true);
   printFramerate();
 }
 
