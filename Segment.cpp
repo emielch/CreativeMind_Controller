@@ -54,7 +54,7 @@ void Segment::setRainbow(float spd, float len, byte bri){
 
 void Segment::setStaticColor(Color c){
 	e_color = c;
-	if(c.brightness() == 0){
+	if(c.red() == 0 && c.green() == 0 && c.blue() == 0){
 		setStaticBlack();
 		return;
 	}else if(c.red() == 255 && c.green() == 255 && c.blue() == 255){
