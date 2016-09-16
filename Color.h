@@ -26,7 +26,7 @@ class Color {
 		Color(int v1, byte v2, byte v3, byte mode);
 		
 		void setRGB(byte r, byte g, byte b);
-		void setHSB(int h, byte s, byte b);
+		void setHSB(unsigned int h, byte s, byte b);
 		
 		byte red();
 		byte green();

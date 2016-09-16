@@ -24,8 +24,8 @@ void Color::setRGB(byte r, byte g, byte b){
 	HSB_updated = false;
 }
 
-void Color::setHSB(int h, byte s, byte b){
-	HSB_color.h = (h+360)%360;
+void Color::setHSB(unsigned int h, byte s, byte b){
+	HSB_color.h = h%360;
 	HSB_color.s = s;
 	HSB_color.b = b;
 	RGB_updated = false;
