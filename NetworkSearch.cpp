@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "NetworkSearch.h"
 
-#include <external\QueueList.h>
+#include <external/QueueList.h>
 
 NetworkSearch::NetworkSearch(){
 
