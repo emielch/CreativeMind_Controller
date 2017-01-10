@@ -33,7 +33,15 @@ void Colore::beginNN(int bDec, float nCharge, int _DCSpd, int _DCPower, float _D
 	neuralMode = true;
 }
 
+void Colore::update(){
+	update(true,true);
+}
+
 void Colore::update(boolean clearPixels){
+	update(clearPixels,true);
+}
+
+void Colore::update(boolean clearPixels, boolean sendPixels){
 	calcDt();
 	
 	if(clearPixels) resetPixels();
@@ -45,7 +53,7 @@ void Colore::update(boolean clearPixels){
 	
 	if(neuralMode)	neural.update();
 
-	showPixels();
+	if(sendPixels) showPixels();
 }
 
 void Colore::calcDt(){
