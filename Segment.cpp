@@ -15,10 +15,15 @@ Segment::Segment(int _segLen, uint16_t *_ledArray){
 }
 
 Segment::Segment(uint16_t _startLed, uint16_t _endLed){
-	startLed = _startLed;
+	uint16_t len = _endLed - _startLed + 1;
+	Segment(1,&_startLed,len);
+}
+
+Segment::Segment(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen){
+	ledArray = _startLeds;
+	startsLen = _startsLen;
+	segLen = _segLen;
 	ledDefMode = STARTEND;
-	
-	segLen = _endLed - _startLed + 1;
 	
 	blendMode = ADD;
 	effectID = BLACK;  // no effect on segment
@@ -32,8 +37,13 @@ void Segment::setBlendMode(int _blendMode){
 }
 
 uint16_t Segment::getPixelID(uint16_t i){
+	getPixelID(i,0);
+}
+
+uint16_t Segment::getPixelID(uint16_t i, uint16_t startLedID){
 	if(ledDefMode == STARTEND){
-		return startLed + i;
+		if(startLedID >= startsLen) startLedID = startsLen-1;
+		return ledArray[startLedID] + i;
 	}
 	return ledArray[i];
 }
@@ -336,6 +346,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 			break;
 		}
 		
+		////// FIRE needs to be reimplemented, doesnt support copies
 		case FIRE:{
 			int Cooling = 20;
 			unsigned int Sparking = 80;
@@ -412,7 +423,13 @@ void Segment::blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, b
 		else if(blendMode == MULTIPLY) c.multiply(prevCol,1);
 	}
 	
-	setPixel( pixelID, c.red(), c.green(), c.blue() );
+	if(ledDefMode == STARTEND){
+		for(int i=0; i<startsLen; i++){
+			pixelID = getPixelID(i,segPixel);
+			setPixel( pixelID, c.red(), c.green(), c.blue() );
+		}
+		
+	}else setPixel( pixelID, c.red(), c.green(), c.blue() );
 }
 
 

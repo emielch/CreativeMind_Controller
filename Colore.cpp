@@ -51,7 +51,7 @@ void Colore::update(boolean clearPixels, boolean sendPixels){
 		segArray[i].draw(setPixel,getPixel);
 	}
 	
-	if(neuralMode)	neural.update();
+	if(neuralMode) neural.update();
 
 	if(sendPixels) showPixels();
 }

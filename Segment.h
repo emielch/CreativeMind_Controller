@@ -22,7 +22,7 @@
 #define NEURON 0
 #define SYNAPSE 1
 
-#define COMPLETE 0
+#define COMPLETE 0  //ledDefMode
 #define STARTEND 1
 
 #define ADD 0
@@ -34,14 +34,16 @@ class Beam;
 
 class Segment{
 	public:
-		Segment(int _segLen, uint16_t *_ledArray);
-		Segment(uint16_t startLed, uint16_t endLed);
+		Segment(int _segLen, uint16_t *_ledArray);  // ledDefMode COMPLETE
+		Segment(uint16_t _startLed, uint16_t _endLed); // ledDefMode STARTEND
+		Segment(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen);
 		void setBlendMode(int _blendMode);
 		void setNN(boolean _nnType, int _connAm, Segment **_connSeg);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		void move(float dt);
 		uint16_t getLen(){return segLen;}
 		uint16_t getPixelID(uint16_t i);
+		uint16_t getPixelID(uint16_t i, uint16_t startLedID);
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
 		void setStaticBlack();
@@ -74,10 +76,11 @@ class Segment{
 		
 		
 	private:
-		boolean ledDefMode;
+		boolean ledDefMode; // COMPLETE mode or STARTEND mode
 		uint16_t segLen;  // segment length
-		uint16_t *ledArray;  // LUT for converting segment pixel ID's to strip pixel ID's
-		uint16_t startLed;
+		uint16_t *ledArray;  // COMPLETE: LUT for converting segment pixel ID's to strip pixel ID's / STARTEND: array containing the ID's of segment starts
+		uint16_t startsLen;  // amount of start leds when STARTEND
+		
 		byte effectID;
 		
 		int blendMode;
