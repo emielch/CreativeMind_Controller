@@ -431,7 +431,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 }
 
 void Segment::blendSetPixel(int segPixel, Color _c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
-	uint16_t pixelIDs[10];
+	uint16_t pixelIDs[startsLen];
 	uint16_t arraySize = 0;
 	getPixelID(segPixel,&arraySize,pixelIDs);
 	
