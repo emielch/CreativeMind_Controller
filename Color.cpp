@@ -94,6 +94,13 @@ void Color::add(Color toAdd, float fadeFac){
 	}
 }
 
+void Color::add(Color toAdd){
+	byte r = constrain(red() + toAdd.red(), 0,255);
+	byte g = constrain(green() + toAdd.green(), 0,255);
+	byte b = constrain(blue() + toAdd.blue(), 0,255);
+	setRGB(r,g,b);
+}
+
 void Color::addHDR(Color toAdd, float fadeFac){
 	if(fadeFac!=0.){
 		int r = red() + toAdd.red()*fadeFac;
@@ -125,6 +132,27 @@ void Color::multiply(Color toMult, float fadeFac){
 		if(toMult.green()!=255) g = g * (toMult.green()+(255-toMult.green())*(1-fadeFac)) / 255;
 		if(toMult.blue()!=255) b = b * (toMult.blue()+(255-toMult.blue())*(1-fadeFac)) / 255;
 		
+		setRGB(r,g,b);
+	}
+}
+
+void Color::multiply(Color toMult){
+	byte r = red();
+	byte g = green();
+	byte b = blue();
+	
+	if(toMult.red()!=255) r = r * toMult.red() / 255.;
+	if(toMult.green()!=255) g = g * toMult.green() / 255.;
+	if(toMult.blue()!=255) b = b * toMult.blue() / 255.;
+	
+	setRGB(r,g,b);
+}
+
+void Color::multiply(float multFac){
+	if(multFac!=1.){
+		byte r = red()*multFac;
+		byte g = green()*multFac;
+		byte b = blue()*multFac;
 		setRGB(r,g,b);
 	}
 }

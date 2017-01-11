@@ -43,8 +43,9 @@ class Segment{
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		void move(float dt);
 		uint16_t getLen(){return segLen;}
-		uint16_t getPixelID(uint16_t i);
-		uint16_t getPixelID(uint16_t i, uint16_t startLedID);
+		// uint16_t getPixelID(uint16_t pixID);
+		// uint16_t getPixelID(uint16_t pixID, uint16_t startLedID);
+		void getPixelID(uint16_t pixID, uint16_t* arraySize, uint16_t* returnArray);
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
 		void setStaticBlack();
@@ -63,6 +64,7 @@ class Segment{
 		boolean setBeam(boolean dir, float spd, byte spdMode, float len, Color col);
 		boolean setNNBeam(boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		
+		void blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		
 		//-- NN
 		Segment **connSeg;  // neurons are connected to multiple synapses, synapses to two neurons
@@ -86,7 +88,6 @@ class Segment{
 		byte effectID;
 		
 		int blendMode;
-		void blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		
 		void addBeam(Beam* beam);
 

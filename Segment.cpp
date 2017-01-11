@@ -41,16 +41,28 @@ void Segment::setBlendMode(int _blendMode){
 	blendMode = _blendMode;
 }
 
-uint16_t Segment::getPixelID(uint16_t i){
-	getPixelID(i,0);
-}
+// uint16_t Segment::getPixelID(uint16_t pixID){
+	// getPixelID(pixID,0);
+// }
 
-uint16_t Segment::getPixelID(uint16_t i, uint16_t startLedID){
+// uint16_t Segment::getPixelID(uint16_t pixID, uint16_t startLedID){
+	// if(ledDefMode == STARTEND){
+		// if(startLedID >= startsLen) startLedID = startsLen-1;
+		// return ledArray[startLedID] + pixID;
+	// }
+	// return ledArray[pixID];
+// }
+
+void Segment::getPixelID(uint16_t pixID, uint16_t* arraySize, uint16_t* returnArray){
 	if(ledDefMode == STARTEND){
-		if(startLedID >= startsLen) startLedID = startsLen-1;
-		return ledArray[startLedID] + i;
+		for(int i=0; i<startsLen; i++){
+			returnArray[i] = ledArray[i] + pixID;
+		}
+		*arraySize = startsLen;
+	}else{
+		returnArray[0] = ledArray[pixID];
+		*arraySize = 1;
 	}
-	return ledArray[i];
 }
 
 void Segment::setNN(boolean _nnType, int _connAm, Segment **_connSeg){
@@ -242,7 +254,7 @@ void Segment::move(float dt){
 			if(e_outSpd>0){
 				spdBoost = (1-e_pos)*e_spd*(e_outSpd) + e_spd*(1-e_outSpd);
 			}else if(e_outSpd<0){
-				spdBoost = e_pos*e_spd*(-e_outSpd) + e_spd*(1-(-e_outSpd));
+				spdBoost = e_pos*e_spd*(-e_outSpd) + e_spd*(1+e_outSpd);
 			}
 			e_pos += spdBoost*dt;
 			if(e_pos >= 1 || e_pos <= 0){
@@ -352,7 +364,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 		}
 		
 		////// FIRE needs to be reimplemented, doesnt support copies
-		case FIRE:{
+		case FIRE:{/*
 			int Cooling = 20;
 			unsigned int Sparking = 80;
 			// Step 1.  Cool down every cell a little
@@ -405,7 +417,7 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				
 				setPixel( pixelID, c.red(), c.green(), c.blue() );
 			}
-				
+				*/
 			break;
 		}
 			
@@ -418,23 +430,23 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 	drawBeams(setPixel,getPixel);
 }
 
-void Segment::blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
-	int pixelID = getPixelID(segPixel);
+void Segment::blendSetPixel(int segPixel, Color _c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int)){
+	uint16_t pixelIDs[10];
+	uint16_t arraySize = 0;
+	getPixelID(segPixel,&arraySize,pixelIDs);
 	
-	if(blendMode != NORMAL){
-		Color prevCol = getPixel(pixelID);
-		
-		if(blendMode == ADD) c.add(prevCol,1);
-		else if(blendMode == MULTIPLY) c.multiply(prevCol,1);
+	for(int i=0; i<arraySize; i++){
+		Color c = _c;
+		if(blendMode != NORMAL){
+			Color prevCol = getPixel(pixelIDs[i]);
+			
+			if(blendMode == ADD) c.add(prevCol);
+			else if(blendMode == MULTIPLY) c.multiply(prevCol);
+		}
+		setPixel( pixelIDs[i], c.red(), c.green(), c.blue() );
 	}
 	
-	if(ledDefMode == STARTEND){
-		for(int i=0; i<startsLen; i++){
-			pixelID = getPixelID(segPixel,i);
-			setPixel( pixelID, c.red(), c.green(), c.blue() );
-		}
-		
-	}else setPixel( pixelID, c.red(), c.green(), c.blue() );
+	
 }
 
 

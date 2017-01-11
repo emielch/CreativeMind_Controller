@@ -36,8 +36,11 @@ class Color {
 		byte brightness();
 		
 		void add(Color toAdd, float fadeFac);
+		void add(Color toAdd);
 		void addHDR(Color toAdd, float fadeFac);
 		void multiply(Color toMult, float fadeFac);
+		void multiply(Color toMult);
+		void multiply(float multFac);
 		void fade(Color toFade, float fadeFac);
 		void fade(Color c1, Color c2, float fadeFac);
 	

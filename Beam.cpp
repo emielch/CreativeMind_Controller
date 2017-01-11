@@ -78,11 +78,12 @@ void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)
 		}else{
 			bri = 1 - (posFactor*2 - 1);
 		}
+		
+		Color c = color;
+		c.multiply(bri);
+		
 		for(int i=0; i<=onSegment->getLen(); i++){
-			int pixelID = onSegment->getPixelID(i);
-			Color prevCol = getPixel(pixelID);
-			prevCol.add(color,bri);
-			setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
+			onSegment->blendSetPixel(i,c,setPixel,getPixel);
 		}
 	}else if(mode == PULSE || mode == NEURAL){
 		float position = posFactor * onSegment->getLen();
@@ -91,11 +92,10 @@ void Beam::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)
 		
 		for(int i=startLed; i<=endLed; i++){
 			if( i>=0 && i<onSegment->getLen() ){
-				int pixelID = onSegment->getPixelID(i);
 				float dist = constrain(1-abs(i-position)/spread*2, 0, 1);
-				Color prevCol = getPixel(pixelID);
-				prevCol.add(color,dist);
-				setPixel(pixelID, prevCol.red(), prevCol.green(), prevCol.blue());
+				Color c = color;
+				c.multiply(dist);
+				onSegment->blendSetPixel(i,c,setPixel,getPixel);
 			}
 		}
 	}
