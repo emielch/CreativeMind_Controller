@@ -16,10 +16,15 @@ Segment::Segment(int _segLen, uint16_t *_ledArray){
 
 Segment::Segment(uint16_t _startLed, uint16_t _endLed){
 	uint16_t len = _endLed - _startLed + 1;
-	Segment(1,&_startLed,len);
+	startLed = _startLed;
+	initStartEnd(1,&startLed,len);
 }
 
 Segment::Segment(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen){
+	initStartEnd(_startsLen, _startLeds, _segLen);
+}
+
+void Segment::initStartEnd(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen){
 	ledArray = _startLeds;
 	startsLen = _startsLen;
 	segLen = _segLen;
@@ -425,7 +430,7 @@ void Segment::blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, b
 	
 	if(ledDefMode == STARTEND){
 		for(int i=0; i<startsLen; i++){
-			pixelID = getPixelID(i,segPixel);
+			pixelID = getPixelID(segPixel,i);
 			setPixel( pixelID, c.red(), c.green(), c.blue() );
 		}
 		

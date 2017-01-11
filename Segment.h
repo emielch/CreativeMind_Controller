@@ -37,6 +37,7 @@ class Segment{
 		Segment(int _segLen, uint16_t *_ledArray);  // ledDefMode COMPLETE
 		Segment(uint16_t _startLed, uint16_t _endLed); // ledDefMode STARTEND
 		Segment(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen);
+		void initStartEnd(uint16_t _startsLen, uint16_t *_startLeds, uint16_t _segLen);
 		void setBlendMode(int _blendMode);
 		void setNN(boolean _nnType, int _connAm, Segment **_connSeg);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
@@ -79,6 +80,7 @@ class Segment{
 		boolean ledDefMode; // COMPLETE mode or STARTEND mode
 		uint16_t segLen;  // segment length
 		uint16_t *ledArray;  // COMPLETE: LUT for converting segment pixel ID's to strip pixel ID's / STARTEND: array containing the ID's of segment starts
+		uint16_t startLed;   // save the start led when mode is STARTEND without copies
 		uint16_t startsLen;  // amount of start leds when STARTEND
 		
 		byte effectID;
