@@ -61,7 +61,7 @@ class Segment{
 		Color getOutColor();
 		
 		void setBeamControl(BeamControl *_beamControl);
-		boolean setBeam(boolean dir, float spd, byte spdMode, float len, Color col);
+		Beam* setBeam(boolean dir, float spd, byte spdMode, float len, Color col);
 		boolean setNNBeam(boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		
 		void blendSetPixel(int segPixel, Color c, void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
@@ -76,6 +76,8 @@ class Segment{
 		//-- network search
 		boolean visited = false;
 		Segment *parent;
+		
+		Beam *beamAnchor; // linked list anchor
 		
 		
 	private:
@@ -104,7 +106,7 @@ class Segment{
 		//---
 		
 		BeamControl *beamControl;
-		Beam *beamAnchor; // linked list anchor
+		
 		
 		void updateBeams(float dt);
 		void drawBeams(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));

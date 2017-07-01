@@ -38,6 +38,8 @@ class Beam{
 		Color color;
 		byte spdMode;
 		
+		byte freqIndex;
+		
 		//-- linked list pointer
 		Beam *nextBeam;
 		

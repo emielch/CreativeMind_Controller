@@ -173,12 +173,12 @@ void Segment::setBeamControl(BeamControl *_beamControl){
 	beamControl = _beamControl;
 }
 
-boolean Segment::setBeam(boolean dir, float spd, byte spdMode, float len, Color col){
+Beam* Segment::setBeam(boolean dir, float spd, byte spdMode, float len, Color col){
 	Beam* newBeam = beamControl->freeBeam();
 	if(newBeam == NULL) return false;
 	newBeam->begin(this, dir, spd, spdMode, len, col, PULSE);
 	addBeam(newBeam);
-	return true;
+	return newBeam;
 }
 
 boolean Segment::setNNBeam(boolean dir, float spd, byte spdMode, float len, Color col, int power){
