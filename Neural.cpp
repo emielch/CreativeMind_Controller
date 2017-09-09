@@ -132,7 +132,7 @@ boolean Neural::startSynapseBeam(Segment *synapse, boolean dir, float _spd, byte
 	}
 	
 	// send the pulse into the neural network
-	return addNNBeam(synapse, dir, _spd, _spdMode, _len, _col, _power);
+	return synapse->setNNBeam(dir, _spd, _spdMode, _len, _col, _power);
 }
 
 
@@ -217,11 +217,4 @@ void Neural::neuronDischarge(Segment *neuron, int hue){
 		// fire the beam
 		startSynapseBeam(nextSynapse, dir, DCSpd, DCSpdMode, DCSpread, col, DCPower);
 	}
-}
-
-boolean Neural::addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power){
-	Beam* newBeam = beamControl->freeBeam();
-	if(newBeam == NULL) return false;
-	seg->setNNBeam(dir, spd, spdMode, len, col, power);
-	return true;
 }

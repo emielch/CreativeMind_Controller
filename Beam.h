@@ -21,8 +21,9 @@ class Segment;  // forward declaration
 class Beam{
 	public:
 		Beam();
-		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode);
-		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power);
+		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, float _spread, Color col, byte _mode);
+		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float _spread, Color col, byte _mode);
+		void begin(Segment *seg, boolean dir, float spd, byte spdMode, float _spread, Color col, byte _mode, int _power);
 		boolean move(float dt);
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		boolean isActive();
@@ -34,6 +35,7 @@ class Beam{
 		float segSpd;
 		float pixelSpd;
 		boolean dir; // UP or DOWN
+		float length;
 		float spread;
 		Color color;
 		byte spdMode;

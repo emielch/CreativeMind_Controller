@@ -6,12 +6,13 @@ Beam::Beam(){
 	active = false;
 }
 
-void Beam::begin(Segment *seg, boolean _dir, float spd, byte _spdMode, float len, Color col, byte _mode){    // speed in pixels/sec or segment/sec
+void Beam::begin(Segment *seg, boolean _dir, float spd, byte _spdMode, float len, float _spread, Color col, byte _mode){    // speed in pixels/sec or segment/sec
 	active = true;
 	arrived = false;
 	mode = _mode;
 	onSegment = seg;
-	spread = len;
+	length = len;
+	spread = _spread;
 	color = col;
 	dir = _dir;
 	spdMode = _spdMode;
@@ -34,9 +35,13 @@ void Beam::begin(Segment *seg, boolean _dir, float spd, byte _spdMode, float len
 	nextBeam = NULL;
 }
 
-void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, byte _mode, int _power){
+void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float _spread, Color col, byte _mode, int _power){
 	power = _power;
-	begin(seg, dir, spd, spdMode, len, col, _mode);
+	begin(seg, dir, spd, spdMode, 0, _spread, col, _mode);
+}
+
+void Beam::begin(Segment *seg, boolean dir, float spd, byte spdMode, float _spread, Color col, byte _mode){
+	begin(seg, dir, spd, spdMode, 0, _spread, col, _mode);
 }
 
 boolean Beam::move(float dt){

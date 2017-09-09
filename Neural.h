@@ -22,7 +22,6 @@ class Neural{
 	private:
 		void arriveBeam(Beam *beam);
 		void neuronDischarge(Segment *neuron, int hue);
-		boolean addNNBeam(Segment *seg, boolean dir, float spd, byte spdMode, float len, Color col, int power);
 		BeamControl *beamControl;
 		
 		int beamDecay;
