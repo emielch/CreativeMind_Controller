@@ -30,7 +30,7 @@ OctoWS2811 leds(ledsPerStrip, displayMemory, drawingMemory, config);
 
 void set_ledLib(int pixel, byte r, byte g, byte b){
 //  leds.setPixel(pixel, r, g, b);
-  leds.setPixel(pixel, LUT[r], LUT[g], LUT[b]);
+  leds.setPixel(pixel, LUT[int(r*0.96)], LUT[g], LUT[int(b*0.86)]);
 }
 
 
