@@ -18,6 +18,7 @@
 #define WIPE 7
 #define WHITE 8
 #define FIRE 9
+#define PULSATE 10
 
 #define NEURON 0
 #define SYNAPSE 1
@@ -43,9 +44,11 @@ class Segment{
 		void draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPixel)(int));
 		void move(float dt);
 		uint16_t getLen(){return segLen;}
+		byte getEffectID() { return effectID; }
 		// uint16_t getPixelID(uint16_t pixID);
 		// uint16_t getPixelID(uint16_t pixID, uint16_t startLedID);
 		void getPixelID(uint16_t pixID, uint16_t* arraySize, uint16_t* returnArray);
+
 		void setRainbow(float spd, float len, byte bri);
 		void setStaticColor(Color c);
 		void setStaticBlack();
@@ -56,6 +59,7 @@ class Segment{
 		void setGradient(Color c1, Color c2);
 		void setWipe(Color c, float spd, boolean dir, float fadeLen, float accel);
 		void setFire();
+		void setPulsate(Color c, float spd);
 		
 		Color getCurrentColor();
 		Color getOutColor();

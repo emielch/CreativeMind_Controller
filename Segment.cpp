@@ -161,6 +161,13 @@ void Segment::setFire(){
 	effectID = FIRE;
 }
 
+void Segment::setPulsate(Color c, float spd) {
+	effectID = PULSATE;
+	e_toColor = c;
+	e_spd = spd;
+	e_pos = 0;
+}
+
 Color Segment::getCurrentColor(){
 	return e_color;
 }
@@ -259,6 +266,13 @@ void Segment::move(float dt){
 			e_pos += spdBoost*dt;
 			if(e_pos >= 1 || e_pos <= 0){
 				setStaticColor(e_color);
+			}
+			break;
+		}
+		case PULSATE: {
+			e_pos += e_spd * dt;
+			if (e_pos >= 2) {
+				e_pos -= 2;
 			}
 			break;
 		}
@@ -418,6 +432,15 @@ void Segment::draw(void (*setPixel)(int pixel, byte, byte, byte), Color (*getPix
 				setPixel( pixelID, c.red(), c.green(), c.blue() );
 			}
 				*/
+			break;
+		}
+		case PULSATE: {
+			float fade = e_pos;
+			if (fade > 1) fade = 1 - (fade - 1);
+			e_color.fade(e_toColor, Color(0, 0, 0, RGB_MODE), fade);
+			for (int i = 0; i<segLen; i++) {
+				blendSetPixel(i, e_color, setPixel, getPixel);
+			}
 			break;
 		}
 			
