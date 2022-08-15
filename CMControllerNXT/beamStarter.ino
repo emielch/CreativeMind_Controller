@@ -35,6 +35,16 @@ void beginButtons(){
   }
 }
 
+bool anyPressed(){
+  for(int i=0; i<buttonAm; i++){
+    byte buttonPin = buttons[i].pin;
+    if( !digitalRead(buttonPin) ){
+      return true;
+    }
+  }
+  return false;
+}
+
 void checkButtons(){
   boolean allPressed = true;
   

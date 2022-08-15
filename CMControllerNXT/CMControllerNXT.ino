@@ -27,6 +27,9 @@ void setup() {
   delay(500);
   beginButtons();
   pinMode(statusLedPin, OUTPUT);
+  if(anyPressed()){
+    rainbowStart();
+  }
   setNN();
   colore.beginNN(beamDecay, neuronChargeFac, DCSpd, DCPower, DCSpread, DCSpdMode, fadeInSpd, fadeOutSpd, allowDirectSynapse);
   colore.neural.setSendFireFunction(&sendNeuronFire);
